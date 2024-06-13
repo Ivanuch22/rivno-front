@@ -1,5 +1,5 @@
 const routes = {
-  baseURL: "https://rivno.com.ua:3000",
+  baseURL: "https://api.rivno.com.ua",
 
   auth: "/auth",
   refresh: "/api/token/refresh/",
