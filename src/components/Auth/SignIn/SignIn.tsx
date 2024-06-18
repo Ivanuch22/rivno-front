@@ -14,7 +14,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-import routes from "@/routes";
+import routes from "@/routes/index";
 
 import { useAuth } from "@/context/Auth";
 
@@ -52,7 +52,7 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().email("Неправильний email").required("Email обов'язковий"),
   password: Yup.string()
     .required("Пароль обов'язковий")
-    .min(4, "Пароль має містити мінімум 4 символа"),
+    .min(3, "Пароль має містити мінімум 4 символа"),
 });
 
 interface ISingUp {
@@ -83,7 +83,7 @@ const SignInForm: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsA
     };
     try {
       const res = await login(formattedData);
-      if (res.access) {
+      if (res.access) { 
         handleFormChange({ type: "signInForm" });
 
         setIsLoading(false);
@@ -121,7 +121,7 @@ const SignInForm: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsA
 
           <Typography
             sx={{
-              color: "#74788D",
+              color: "#657be5",
               fontSize: "14px",
               marginTop: "12px",
               margin: "12px auto 0 auto",
@@ -147,14 +147,14 @@ const SignInForm: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsA
                       color: "#495057",
                     },
                     "& .MuiInput-underline:after": {
-                      borderBottomColor: "#5A3AB6",
+                      borderBottomColor: "#657be5",
                     },
                     "& .MuiOutlinedInput-root": {
                       "&:hover fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                     },
                   }}
@@ -177,14 +177,14 @@ const SignInForm: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsA
                       color: "#495057",
                     },
                     "& .MuiInput-underline:after": {
-                      borderBottomColor: "#5A3AB6",
+                      borderBottomColor: "#657be5",
                     },
                     "& .MuiOutlinedInput-root": {
                       "&:hover fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                     },
                   }}
@@ -219,12 +219,12 @@ const SignInForm: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsA
               <Button
                 sx={{
                   marginTop: "16px",
-                  backgroundColor: "#5A3AB6",
+                  backgroundColor: "#657be5",
                     padding : "13.5px 14px",
                     fontSize: "15px",
                     fontWeight: "700",
                   "&:hover": {
-                    backgroundColor: "#5A3AB6",
+                    backgroundColor: "#657be5",
                   },
                 }}
                 variant="contained"
@@ -252,7 +252,7 @@ const SignInForm: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsA
         <Button
           onClick={() => handleFormChange({ type: "forgotPasswordForm" })}
           sx={{
-            color: "var(--009-efd, #5A3AB6)",
+            color: "var(--009-efd, #657be5",
             fontFamily: "Roboto",
             fontSize: "16px",
             fontStyle: "normal",
@@ -274,7 +274,7 @@ const SignInForm: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsA
           <Typography
             sx={{
               ...styleQuestionTypography,
-              color: "#74788D",
+              color: "#657be5",
               fontWeight: "400",
             }}
           >
@@ -287,7 +287,7 @@ const SignInForm: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsA
               display: "inline",
               textTransform: "none",
               marginLeft: "4px",
-              color: "#5A3AB6",
+              color: "#657be5",
               fontWeight: "400",
             }}
             onClick={() => handleFormChange({ type: "signUpForm" })}

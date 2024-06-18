@@ -14,9 +14,12 @@ import "./index.css";
 import StripeModalProvider from "./context/StripeModal";
 import ConciergContextProvider from "./context/Concierg";
 import PageContextProvider from "./context/PageNaming";
+import { MaterialUIControllerProvider } from "./context";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <>
+    <MaterialUIControllerProvider>
+
     <QueryClientProvider client={queryClient}>
       <PageContextProvider>
         <ConciergContextProvider>
@@ -35,5 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </ConciergContextProvider>
       </PageContextProvider>
     </QueryClientProvider>
+    </MaterialUIControllerProvider>
+
   </>
 );

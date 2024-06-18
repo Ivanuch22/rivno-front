@@ -57,7 +57,7 @@ const ResetPassword: React.FC = () => {
 
           <Typography
             sx={{
-              color: "#74788D",
+              color: "#657be5",
               fontSize: "14px",
               marginTop: "12px",
               margin: "12px auto 0 auto",
@@ -77,14 +77,14 @@ const ResetPassword: React.FC = () => {
                   color: "#495057",
                 },
                 "& .MuiInput-underline:after": {
-                  borderBottomColor: "#5A3AB6",
+                  borderBottomColor: "#657be5",
                 },
                 "& .MuiOutlinedInput-root": {
                   "&:hover fieldset": {
-                    borderColor: "#5A3AB6",
+                    borderColor: "#657be5",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "#5A3AB6",
+                    borderColor: "#657be5",
                   },
                 },
               }}
@@ -116,14 +116,14 @@ const ResetPassword: React.FC = () => {
                   color: "#495057",
                 },
                 "& .MuiInput-underline:after": {
-                  borderBottomColor: "#5A3AB6",
+                  borderBottomColor: "#657be5",
                 },
                 "& .MuiOutlinedInput-root": {
                   "&:hover fieldset": {
-                    borderColor: "#5A3AB6",
+                    borderColor: "#657be5",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "#5A3AB6",
+                    borderColor: "#657be5",
                   },
                 },
               }}
@@ -151,9 +151,9 @@ const ResetPassword: React.FC = () => {
             <Button
               sx={{
                 marginTop: "16px",
-                backgroundColor: "#5A3AB6",
+                backgroundColor: "#657be5",
                 "&:hover": {
-                  backgroundColor: "#5A3AB6",
+                  backgroundColor: "#657be5",
                 },
               }}
               variant="contained"

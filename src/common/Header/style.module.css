@@ -1,0 +1,24 @@
+.header {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    position: fixed;
+    z-index: 1100;
+    right: 0;
+    left:  calc(10% + 170px);
+    box-shadow: none;
+    overflow: hidden;
+    background-color: #fff;
+    backdrop-filter: none;
+    top: 0.75rem;
+    min-height: 4.6875rem;
+    display: grid;
+    align-items: center;
+    padding: 20px;
+    top: 0;
+    height: 50px;
+}
+
+.header_title {
+    font-weight: 600;
+    font-size: 32px;
+}

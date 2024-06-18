@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import routes from "@/routes";
+import routes from "@/routes/index";
 import { localStorageManager } from "./LocalStorage";
 import { REFRESH_TOKEN, TOKEN } from "@/constants";
 
@@ -53,7 +53,6 @@ api.interceptors.response.use(
       } catch (err) {
         localStorageManager.removeItem(TOKEN),
           localStorageManager.removeItem(REFRESH_TOKEN);
-        // AuthEmitter.emit('interceptorError');
         console.log(err);
       }
     }

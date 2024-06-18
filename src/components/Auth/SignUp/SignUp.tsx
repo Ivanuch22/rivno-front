@@ -17,7 +17,7 @@ import { IForm } from "../Auth.interfaces";
 
 import { useAuth } from "@/context/Auth";
 import {Navigate} from "react-router-dom";
-import routes from "@/routes";
+import routes from "@/routes/index";
 
 const styleTypography = {
   color: "var(--009-efd, #343A40)",
@@ -126,7 +126,7 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
 
           <Typography
             sx={{
-              color: "#74788D",
+              color: "#657be5",
               fontSize: "14px",
               marginTop: "12px",
               margin: "12px auto 0 auto",
@@ -154,14 +154,14 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
                         color: "#495057",
                       },
                       "& .MuiInput-underline:after": {
-                        borderBottomColor: "#5A3AB6",
+                        borderBottomColor: "#657be5",
                       },
                       "& .MuiOutlinedInput-root": {
                         "&:hover fieldset": {
-                          borderColor: "#5A3AB6",
+                          borderColor: "#657be5",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "#5A3AB6",
+                          borderColor: "#657be5",
                         },
                       },
                     }}
@@ -186,14 +186,14 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
                       color: "#495057",
                     },
                     "& .MuiInput-underline:after": {
-                      borderBottomColor: "#5A3AB6",
+                      borderBottomColor: "#657be5",
                     },
                     "& .MuiOutlinedInput-root": {
                       "&:hover fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                     },
                   }}
@@ -217,14 +217,14 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
                       color: "#495057",
                     },
                     "& .MuiInput-underline:after": {
-                      borderBottomColor: "#5A3AB6",
+                      borderBottomColor: "#657be5",
                     },
                     "& .MuiOutlinedInput-root": {
                       "&:hover fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                     },
                   }}
@@ -262,14 +262,14 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
                       color: "#495057",
                     },
                     "& .MuiInput-underline:after": {
-                      borderBottomColor: "#5A3AB6",
+                      borderBottomColor: "#657be5",
                     },
                     "& .MuiOutlinedInput-root": {
                       "&:hover fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#5A3AB6",
+                        borderColor: "#657be5",
                       },
                     },
                   }}
@@ -309,9 +309,9 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
                     padding : "13.5px 14px",
                     fontSize: "15px",
                     fontWeight: "700",
-                  backgroundColor: "#5A3AB6",
+                  backgroundColor: "#657be5",
                   "&:hover": {
-                    backgroundColor: "#5A3AB6", // Set the same color as the default state
+                    backgroundColor: "#657be5", // Set the same color as the default state
                   },
                 }}
                 variant="contained"
@@ -339,7 +339,7 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
         <Typography
           sx={{
             ...styleQuestionTypography,
-            color: "#74788D",
+            color: "#657be5",
             fontWeight: "400",
           }}
         >
@@ -351,7 +351,7 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
             display: "inline",
             textTransform: "none",
             marginLeft: "4px",
-            color: "#5A3AB6",
+            color: "#657be5",
             fontWeight: "400",
           }}
           onClick={() => handleFormChange({ type: "signInForm" })}

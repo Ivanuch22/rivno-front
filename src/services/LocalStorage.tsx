@@ -35,7 +35,7 @@ class LocalStorageManager {
     return null;
   };
 
-  setUser = (user: IUser): void => {
+  setUser = (user: any): void => {
     localStorage.setItem(USER, JSON.stringify(user));
   };
 

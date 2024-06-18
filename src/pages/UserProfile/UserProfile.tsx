@@ -1,271 +1,272 @@
-import React, { useState } from "react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useParams } from "react-router-dom";
-import { useMutation, useQuery } from "react-query";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import * as Yup from "yup";
+import React, { useState } from 'react';
+import { Container, Box, Typography, Avatar, Grid, TextField, Button, IconButton } from '@mui/material';
+import { useAuth } from "@/context/Auth";
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';
+import EditIcon from '@mui/icons-material/Edit';
+import routes from '@/routes';
+import {localStorageManager} from "@/services"
+import { IUser } from '@/interfaces/user.interfaces';
 
-import {
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  TextField,
-  Typography,
-} from "@mui/material";
-
-import api from "@/services/apiService";
-import routes from "@/routes";
-import { IUser } from "@/interfaces/user.interfaces";
-
-import styles from "./UserProfile.module.css";
-import ContactDetailsForm from "./ContactDetailsForm/ContactDetailsForm";
-import JobQuestionnaireFrom from "./JobQuestionnaireForm/JobQuestionnaireFrom";
-import CareerPreferencesForm from "./CareerPreferencesForm/CareerPreferencesForm";
-
-interface IContactdetails {
-  name?: string;
-}
-
-const validationSchema = Yup.object().shape({
-  name: Yup.string(),
+const ProfileSchema = Yup.object().shape({
+  full_name: Yup.string().required("Обов'язково"),
+  phone: Yup.string(),
+  country: Yup.string(),
+  city: Yup.string(),
+  state: Yup.string(),
+  zip_code: Yup.string(),
+  alternate_email: Yup.string().email("Недійсний email"),
+  alternate_phone: Yup.string(),
+  secret_question: Yup.string(),
+  secret_answer: Yup.string(),
 });
 
-const UserProfile: React.FC = () => {
-  const { id } = useParams();
-  const [form, setForm] = useState(1);
+const authAPI = axios.create({
+    baseURL: routes.baseURL,
+    headers: {
+        'Content-Type': 'multipart/form-data',
+        "Authorization" :`Bearer ${localStorageManager.getItem("access")}`
+    },
+  });
 
-  const getUserByIdQuery = async () =>
-    api.get<IUser>(`${routes.editUser}${id}/`).then((res) => res.data);
+const Profile = () => {
+  const { userObject ,updateUserData } = useAuth();
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>(userObject?.avatar || '');
 
-  const updateUserQuery = (values: IContactdetails) =>
-    api.patch(`${routes.editUser}${id}/`, values).then((res) => res.data);
+  const handleFormSubmit = async (userData:IUser) => {
+   if(userData){
+    try{
+        const resposnse = await authAPI.put(routes.updateProfile, userData)
+        if(resposnse.status === 200){
+            localStorageManager.setUser(resposnse.data.user)
+            alert(resposnse.data.message);
+        }
+    }catch(e:any){
+        alert(e.message);
 
-  const { mutateAsync: updateUser, isLoading: isLoadingUpdate } = useMutation(
-    "updateJobDescQuery",
-    (values: IContactdetails) => updateUserQuery(values),
-    {
-      onSuccess: () => {
-        toast.success("User data has been successfully updated");
-        refetch();
-      },
     }
-  );
-
-  const {
-    data: userById,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useQuery<IUser>(["getUserByIdQuery", id], getUserByIdQuery);
-
-  const handleOpenLink = () => {
-    window.open(
-      "https://billing.stripe.com/p/login/cN2g0felS2Ll1HyaEE",
-      "_blank"
-    );
+   }
   };
 
-  const handleChangeForm = (newValue: number) => {
-    setForm(newValue);
+  const handleAvatarChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setAvatar(event.target.files[0]);
+      setAvatarUrl(URL.createObjectURL(event.target.files[0]));
+      try {
+        const formData = new FormData();
+        if (event.target.files[0]) {
+          formData.append('avatar', event.target.files[0]);
+        }
+        const response = await authAPI.post(routes.updateAvatar, formData);
+        if (response.status === 200) {
+            alert('Профіль успішно оновлено');
+            localStorageManager.setUser(response.data.user)
+            setAvatarUrl(response.data.avatarUrl)
+        }
+      } catch (error) {
+        console.error('Помилка при оновленні профілю', error);
+        alert('Не вдалося оновити профіль');
+        return "skdaljf"
+      }
+    }
+    else{
+        alert('Не вдалося оновити профіль');
+    }
   };
 
-  const onSubmit: SubmitHandler<IContactdetails> = async (data) => {
-    await updateUser(data);
-  };
-
-  if (isLoading || isFetching)
-    return <CircularProgress sx={{ color: "#5A3AB6" }} size={34} />;
+  if (!userObject) {
+    return <Typography variant="h6" sx={{ fontFamily: 'inherit' }}>Дані користувача відсутні</Typography>;
+  }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography
-          sx={{
-            color: "#495057",
-            fontFamily: "Poppins",
-            fontSize: "14px",
-            fontStyle: "normal",
-            fontWeight: "500",
-            lineHeight: "16px",
-          }}
-        >
+    <Container maxWidth="md" sx={{ mt: 4, fontFamily: 'inherit' }}>
+      <Box sx={{ textAlign: 'center', mb: 4, position: 'relative' }}>
+        <Avatar
+          alt={userObject.full_name}
+          src={avatarUrl}
+          sx={{ width: 100, height: 100, margin: '0 auto' }}
+        />
+        <input
+          accept="image/*"
+          style={{ display: 'none' }}
+          id="avatar-upload"
+          type="file"
+          onChange={handleAvatarChange}
+        />
+        <label htmlFor="avatar-upload">
+          <IconButton
+            component="span"
+            sx={{
+              position: 'absolute',
+              top: "-20px",
+              right: 'calc(50% - 25px)',
+              backgroundColor: 'white',
+              boxShadow: 3,
+              fontFamily: 'inherit'
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+        </label>
+        <Typography variant="h4" sx={{ mt: 2, fontFamily: 'inherit' }}>
+          {userObject.full_name}
         </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Chip
-              label="Contact details"
-              variant="outlined"
-              sx={
-                form === 1
-                  ? {
-                      background: "#5A3AB6",
-                      border: "none",
-                      whiteSpace: "normal",
-                      textAlign: "center",
-                      color: "#fff",
-                      flexWrap: "wrap",
-                      "& .MuiChip-label": {
-                        whiteSpace: "normal",
-                      },
-                    }
-                  : {
-                      border: "1px solid #5A3AB6",
-                      color: "#5A3AB6",
-                      whiteSpace: "normal",
-                      textAlign: "center",
-                      flexWrap: "wrap",
-                      "& .MuiChip-label": {
-                        whiteSpace: "normal",
-                      },
-                    }
-              }
-              onClick={() => handleChangeForm(1)}
-            />
-            <Chip
-              label="Job Questionnaire"
-              variant="outlined"
-              sx={
-                form === 2
-                  ? {
-                      background: "#5A3AB6",
-                      border: "none",
-                      whiteSpace: "normal",
-                      textAlign: "center",
-                      color: "#fff",
-                      marginLeft: "26px",
-                      flexWrap: "wrap",
-                      "& .MuiChip-label": {
-                        whiteSpace: "normal",
-                      },
-                    }
-                  : {
-                      border: "1px solid #5A3AB6",
-                      color: "#5A3AB6",
-                      marginLeft: "26px",
-                      whiteSpace: "normal",
-                      textAlign: "center",
-                      flexWrap: "wrap",
-                      "& .MuiChip-label": {
-                        whiteSpace: "normal",
-                      },
-                    }
-              }
-              onClick={() => handleChangeForm(2)}
-            />
-            <Chip
-              label="Career Preferences"
-              variant="outlined"
-              sx={
-                form === 3
-                  ? {
-                      background: "#5A3AB6",
-                      border: "none",
-                      whiteSpace: "normal",
-                      textAlign: "center",
-                      marginLeft: "26px",
-                      color: "#fff",
-                      flexWrap: "wrap",
-                      "& .MuiChip-label": {
-                        whiteSpace: "normal",
-                      },
-                    }
-                  : {
-                      border: "1px solid #5A3AB6",
-                      color: "#5A3AB6",
-                      whiteSpace: "normal",
-                      marginLeft: "26px",
-                      textAlign: "center",
-                      flexWrap: "wrap",
-                      "& .MuiChip-label": {
-                        whiteSpace: "normal",
-                      },
-                    }
-              }
-              onClick={() => handleChangeForm(3)}
-            />
-          </Box>
-        </Box>
+        <Typography variant="subtitle1" color="textSecondary" sx={{ fontFamily: 'inherit' }}>
+          {userObject.email}
+        </Typography>
+        <Typography variant="subtitle1" color="textSecondary" sx={{ fontFamily: 'inherit' }}>
+          {userObject.is_verified ? 'Підтверджений' : 'Не підтверджений'}
+        </Typography>
       </Box>
 
-      <Box sx={{ marginTop: "24px" }}>
-        {form === 1 && (
-          <ContactDetailsForm
-            handleChangeForm={handleChangeForm}
-            id={id}
-            userByIdRefetch={refetch}
-            // @ts-ignore
-            user={userById}
-          />
-        )}
-        {form === 2 && (
-          <JobQuestionnaireFrom
-            handleChangeForm={handleChangeForm}
-            id={id}
-            // @ts-ignore
-            user={userById}
-            userByIdRefetch={refetch}
-          />
-        )}
-        {form === 3 && (
-          <CareerPreferencesForm
-            handleChangeForm={handleChangeForm}
-            id={id}
-            // @ts-ignore
-            user={userById}
-            userByIdRefetch={refetch}
-          />
-        )}
-      </Box>
-
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          marginTop: "12px",
-          marginBottom: "24px",
+      <Formik
+        initialValues={{
+          full_name: userObject.full_name,
+          phone: userObject.phone || '',
+          country: userObject.country,
+          city: userObject.city || '',
+          state: userObject.state || '',
+          zip_code: userObject.zip_code || '',
+          alternate_email: userObject.alternate_email || '',
+          alternate_phone: userObject.alternate_phone || '',
+          secret_question: userObject.secret_question || '',
+          secret_answer: userObject.secret_answer || '',
         }}
+        validationSchema={ProfileSchema}
+        onSubmit={handleFormSubmit}
       >
-        <Button
-          onClick={handleOpenLink}
-          sx={{
-            width: " 200px",
-            margin: "0 auto",
-            backgroundColor: "#5A3AB6",
-            "&:hover": {
-              backgroundColor: "#5A3AB6",
-            },
-          }}
-          variant="contained"
-        >
-          Stripe
-        </Button>
-
-        <Typography
-          sx={{
-            // marginTop: "12px",
-            margin: "12px auto",
-            color: "#495057",
-            fontFamily: "Poppins",
-            fontSize: "14px",
-            fontStyle: "normal",
-            fontWeight: "500",
-            lineHeight: "16px",
-          }}
-        >
-          Your customer portal
-        </Typography>
-      </Box>
-    </Box>
+        {({ errors, touched, isValid, dirty }) => (
+          <Form>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="full_name"
+                  as={TextField}
+                  label="Повне ім'я"
+                  fullWidth
+                  error={touched.full_name && !!errors.full_name}
+                  helperText={touched.full_name && errors.full_name}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="phone"
+                  as={TextField}
+                  label="Телефон"
+                  fullWidth
+                  error={touched.phone && !!errors.phone}
+                  helperText={touched.phone && errors.phone}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="country"
+                  as={TextField}
+                  label="Країна"
+                  fullWidth
+                  error={touched.country && !!errors.country}
+                  helperText={touched.country && errors.country}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="city"
+                  as={TextField}
+                  label="Місто"
+                  fullWidth
+                  error={touched.city && !!errors.city}
+                  helperText={touched.city && errors.city}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="state"
+                  as={TextField}
+                  label="Область"
+                  fullWidth
+                  error={touched.state && !!errors.state}
+                  helperText={touched.state && errors.state}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="zip_code"
+                  as={TextField}
+                  label="Поштовий індекс"
+                  fullWidth
+                  error={touched.zip_code && !!errors.zip_code}
+                  helperText={touched.zip_code && errors.zip_code}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="alternate_email"
+                  as={TextField}
+                  label="Альтернативний email"
+                  fullWidth
+                  error={touched.alternate_email && !!errors.alternate_email}
+                  helperText={touched.alternate_email && errors.alternate_email}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="alternate_phone"
+                  as={TextField}
+                  label="Альтернативний телефон"
+                  fullWidth
+                  error={touched.alternate_phone && !!errors.alternate_phone}
+                  helperText={touched.alternate_phone && errors.alternate_phone}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="secret_question"
+                  as={TextField}
+                  label="Секретне питання"
+                  fullWidth
+                  error={touched.secret_question && !!errors.secret_question}
+                  helperText={touched.secret_question && errors.secret_question}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Field
+                  name="secret_answer"
+                  as={TextField}
+                  label="Секретна відповідь"
+                  fullWidth
+                  error={touched.secret_answer && !!errors.secret_answer}
+                  helperText={touched.secret_answer && errors.secret_answer}
+                  sx={{ fontFamily: 'inherit' }}
+                />
+              </Grid>
+            </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <Button
+                variant="contained"
+                style={{color: "#fff"}}
+                type="submit"
+                disabled={!isValid || !dirty}
+                sx={{ fontFamily: 'inherit' }}
+              >
+                Оновити профіль
+              </Button>
+            </Box>
+          </Form>
+        )}
+      </Formik>
+    </Container>
   );
 };
 
-export default UserProfile;
+export default Profile;

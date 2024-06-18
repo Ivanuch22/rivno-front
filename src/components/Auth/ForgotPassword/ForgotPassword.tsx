@@ -111,7 +111,7 @@ const ForgotPassword: React.FC<ISingUp> = ({ handleFormChange }) => {
 
           <Typography
             sx={{
-              color: "#74788D",
+              color: "#657be5",
               fontSize: "14px",
               marginTop: "12px",
               margin: "12px auto 0 auto",
@@ -137,14 +137,14 @@ const ForgotPassword: React.FC<ISingUp> = ({ handleFormChange }) => {
                     color: "#495057",
                   },
                   "& .MuiInput-underline:after": {
-                    borderBottomColor: "#5A3AB6",
+                    borderBottomColor: "#657be5",
                   },
                   "& .MuiOutlinedInput-root": {
                     "&:hover fieldset": {
-                      borderColor: "#5A3AB6",
+                      borderColor: "#657be5",
                     },
                     "&.Mui-focused fieldset": {
-                      borderColor: "#5A3AB6",
+                      borderColor: "#657be5",
                     },
                   },
                 }}
@@ -163,9 +163,9 @@ const ForgotPassword: React.FC<ISingUp> = ({ handleFormChange }) => {
                 sx={{
                   marginTop: "16px",
                     padding: "13px 16px !important",
-                  backgroundColor: "#5A3AB6",
+                  backgroundColor: "#657be5",
                   "&:hover": {
-                    backgroundColor: "#5A3AB6",
+                    backgroundColor: "#657be5",
                   },
                 }}
                 type="submit"
@@ -193,7 +193,7 @@ const ForgotPassword: React.FC<ISingUp> = ({ handleFormChange }) => {
         <Typography
           sx={{
             ...styleQuestionTypography,
-            color: "#74788D",
+            color: "#657be5",
             fontWeight: "400",
           }}
         >
@@ -206,7 +206,7 @@ const ForgotPassword: React.FC<ISingUp> = ({ handleFormChange }) => {
             display: "inline",
             textTransform: "none",
             marginLeft: "4px",
-            color: "#5A3AB6",
+            color: "#657be5",
             fontWeight: "400",
           }}
           onClick={() => handleFormChange({ type: "signInForm" })}

@@ -10,16 +10,18 @@ import axios from "axios";
 
 import { localStorageManager } from "@/services";
 
-import { REFRESH_TOKEN, ROLE, TOKEN } from "@/constants";
+import { REFRESH_TOKEN, ROLE, TOKEN, USER } from "@/constants";
 
-import routes from "@/routes";
+import routes from "@/routes/index";
 
 import {
   HttpErrorResponse,
   IForgotFormValues,
   ILoginFormValues,
   IRegistrationFormValues,
+  IUpdateValues,
 } from "@/interfaces/auth.interfaces";
+import { IUser, IUserData } from "@/interfaces/user.interfaces";
 
 type RegistrationType = {
   message: string;
@@ -53,11 +55,13 @@ interface AuthContextInterface {
   isAuthenticated: boolean;
   isLoading: boolean;
   userData: UserDataInterface | null;
+  userObject: IUser | null ;
   signUp: (userData: IRegistrationFormValues) => Promise<RegistrationType>;
   login: (userData: ILoginFormValues) => Promise<LoginType>;
   forgotPassword: (userData: IForgotFormValues) => Promise<ForgotPasswordType>;
   logout: () => void;
   role: string;
+  updateUserData: (user: IUser)=>void;
   handleAuth: (
     access_token: string,
     refresh_token: string,
@@ -88,6 +92,9 @@ const loginMutation = (userData: ILoginFormValues) =>
 const forgotPasswordMutation = (userData: IForgotFormValues) =>
   authAPI.post(routes.forgotPassword, userData).then((res) => res.data);
 
+const putUserData = (userData: IUser) =>
+  authAPI.put(routes.updateProfiel, userData).then((res) => res.data);
+
 export const AuthContext = createContext<AuthContextInterface | null>(null);
 
 export const useAuth = () => useContext(AuthContext) as AuthContextInterface;
@@ -96,6 +103,7 @@ export const AuthProvider = ({ children }: PropsWithChildren<unknown>) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [role, setRole] = useState("");
+  const [userObject, setUser] = useState(()=>localStorageManager.getUser())
   const [token, setAuthToken] = useState(() => {
     return localStorageManager.getItem(TOKEN) || "";
   });
@@ -118,7 +126,12 @@ export const AuthProvider = ({ children }: PropsWithChildren<unknown>) => {
     "forgotPasswordMutation",
     (values: IForgotFormValues) => forgotPasswordMutation(values)
   );
+  const { mutateAsync: updateRequestMutation } = useMutation(
+    "putUserData",
+    (values: IUser) => putUserData(values)
+  );
 
+  
   const signUp = async (userData: IRegistrationFormValues) => {
     try {
       const data = await signUpRequestMutation(userData);
@@ -131,13 +144,15 @@ export const AuthProvider = ({ children }: PropsWithChildren<unknown>) => {
   const login = async (userData: ILoginFormValues) => {
     try {
       const data = await loginRequestMutation(userData);
-      const { access, refresh, role } = data;
+      const { access, refresh, role = "user", user } = data;
 
+      const localUser = localStorageManager.setUser(user);
       const localRole = localStorageManager.getItem(ROLE);
 
       if (role) {
         if (role !== localRole) {
           localStorageManager.setItem(ROLE, role);
+
           setRole(role);
         } else if (localRole !== null) {
           setRole(localRole);
@@ -186,6 +201,16 @@ export const AuthProvider = ({ children }: PropsWithChildren<unknown>) => {
     setAuthToken("");
     setAuthRefreshToken("");
   };
+  const updateUserData =(userData:IUser)=>{
+   try{
+    const data=  updateRequestMutation(userData);
+   }catch(e){
+    throw new Error((e as HttpErrorResponse).message);
+    
+   }
+
+
+  }
 
   useEffect(() => {
     token && refreshToken ? handleAuth(token, refreshToken) : logout();
@@ -210,6 +235,8 @@ export const AuthProvider = ({ children }: PropsWithChildren<unknown>) => {
         userData,
         role,
         isLoading,
+        userObject,
+        updateUserData,
         signUp,
         login,
         handleAuth,
