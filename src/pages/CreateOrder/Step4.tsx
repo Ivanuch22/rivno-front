@@ -3,22 +3,23 @@ import { Field, ErrorMessage, useFormikContext } from "formik";
 import { TextField, Grid, Typography, Box, Button, IconButton, Avatar } from "@mui/material";
 import xrayDefaultImage from "./defaulImages/OPTG.png";
 import ctScanDefaultImage from "./defaulImages/TRG.png";
+import { Link } from "react-router-dom";
 
 const defaultImages = {
   xray: xrayDefaultImage,
   ctScan: ctScanDefaultImage,
 };
 
-const photoNames  = [
-    "OПТГ",
-    "ТРГ"
+const photoNames = [
+  "OПТГ",
+  "ТРГ"
 ]
 
-const Step4 = ({handleFileUpload}:any) => {
-  const { setFieldValue ,values} = useFormikContext<any>();
+const Step4 = ({ readOnly = false, handleFileUpload }: any) => {
+  const { setFieldValue, values } = useFormikContext<any>();
   const [images, setImages] = useState({
-    xray:  values.xray|| defaultImages.xray,
-    ctScan:  values.ctScan|| defaultImages.ctScan,
+    xray: values.xray || defaultImages.xray,
+    ctScan: values.ctScan || defaultImages.ctScan,
   });
 
   const handleImageChange = (e: any, name: string) => {
@@ -42,8 +43,6 @@ const Step4 = ({handleFileUpload}:any) => {
       [name]: defaultImages[name as keyof typeof defaultImages],
     }));
     setFieldValue(name, null);
-
-    
   };
 
   const handleFileChange = (event: any, fieldName: any) => {
@@ -82,10 +81,10 @@ const Step4 = ({handleFileUpload}:any) => {
         </Typography>
 
         <Grid container spacing={2}>
-          {["xray", "ctScan"].map((name,index) => (
+          {["xray", "ctScan"].map((name, index) => (
             <Grid item xs={12} sm={4} key={name}>
               <label htmlFor={`file-input-${name}`}
-               style={{ cursor: "pointer" }}>
+                style={{ cursor: "pointer" }}>
                 <Box
                   sx={{
                     position: 'relative',
@@ -96,28 +95,40 @@ const Step4 = ({handleFileUpload}:any) => {
                     height: 'auto',
                   }}
                 >
-                  <Avatar
-                    src={images[name as keyof typeof defaultImages]}
-                    alt={name}
-                    variant="rounded"
-                    sx={{ width: '100%', height: 'auto', marginBottom: 2 }}
-                  />
+
+                  {readOnly ?
+                    <Link target="_blank" rel="noopener noreferrer" to={images[name as keyof typeof defaultImages]} >
+                      <Avatar
+                        src={images[name as keyof typeof defaultImages]}
+                        alt={name}
+                        variant="rounded"
+                        sx={{ width: '100%', height: '85%', marginBottom: 2 }}
+                      />
+                    </Link> :
+                    <Avatar
+                      src={images[name as keyof typeof defaultImages]}
+                      alt={name}
+                      variant="rounded"
+                      sx={{ width: '100%', height: '85%', marginBottom: 2 }}
+                    />}
                   <IconButton
                     onClick={() => handleImageRemove(name)}
                     sx={{ position: 'absolute', top: 8, left: 8, backgroundColor: 'white' }}
                   >
                   </IconButton>
-                <Typography variant="body2">{photoNames[index]}</Typography>
+                  <Typography variant="body2">{photoNames[index]}</Typography>
 
                 </Box>
                 <input
                   type="file"
+                  disabled={readOnly}
                   accept="image/*"
                   style={{ display: 'none' }}
                   id={`file-input-${name}`}
                   onChange={(e) => {
-                    handleFileChange(e,name)
-                    handleImageChange(e, name)}}
+                    handleFileChange(e, name)
+                    handleImageChange(e, name)
+                  }}
                 />
               </label>
               <ErrorMessage name={name}>
@@ -127,6 +138,9 @@ const Step4 = ({handleFileUpload}:any) => {
           ))}
           <Grid item xs={12}>
             <Field
+              inputProps={{
+                readOnly:readOnly
+              }}
               name="ctLink"
               as={TextField}
               label="Силка на КТ"
@@ -155,6 +169,9 @@ const Step4 = ({handleFileUpload}:any) => {
           </Grid>
           <Grid item xs={12}>
             <Field
+              inputProps={{
+                readOnly:readOnly
+              }}
               name="comments"
               as={TextField}
               label="Коментар"

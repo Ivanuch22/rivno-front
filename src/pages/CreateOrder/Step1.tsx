@@ -3,8 +3,7 @@ import { Field, ErrorMessage, useFormikContext } from "formik";
 import { TextField, Grid, Typography, Box, Button } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-
-const Step1 = ({}: any) => {
+const Step1 = ({readOnly=false}: any) => {
   const { setFieldValue, values } = useFormikContext<any>();
 
   const handleDateChange = (date: any) => {
@@ -60,6 +59,9 @@ const Step1 = ({}: any) => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Field
+              inputProps ={{
+                readOnly:readOnly
+              }}
               name="firstName"
               as={TextField}
               label="Ім'я"
@@ -88,6 +90,9 @@ const Step1 = ({}: any) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Field
+              inputProps ={{
+                readOnly:readOnly
+              }}
               name="lastName"
               as={TextField}
               label="Прізвище"
@@ -116,6 +121,9 @@ const Step1 = ({}: any) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Field
+              inputProps ={{
+                readOnly:readOnly
+              }}
               name="middleName"
               as={TextField}
               label="По-батькові"
@@ -144,6 +152,9 @@ const Step1 = ({}: any) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Field
+              inputProps ={{
+                readOnly:readOnly
+              }}
               name="phone"
               as={TextField}
               label="Телефон"
@@ -172,6 +183,9 @@ const Step1 = ({}: any) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Field
+              inputProps ={{
+                readOnly:readOnly
+              }}
               name="email"
               as={TextField}
               label="Email"
@@ -211,6 +225,9 @@ const Step1 = ({}: any) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Field
+              inputProps ={{
+                readOnly:readOnly
+              }}
               name="age"
               as={TextField}
               label="Вік"
@@ -241,6 +258,9 @@ const Step1 = ({}: any) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Field
+              inputProps ={{
+                readOnly:readOnly
+              }}
               name="gender"
               as={TextField}
               label="Стать"

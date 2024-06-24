@@ -1,17 +1,21 @@
 const routes = {
-  baseURL: "https://api.rivno.com.ua",
-
+  baseURL: "https://api.rivno.com.ua/api",
   auth: "/auth",
-  refresh: "/api/token/refresh/",
-  getTokens: "/api/users/login",
-  registration: "/api/users/registration",
-  forgotPassword: "/api/users/forgot-password",
-  updateProfile: "/api/users/update-profile",
-  updateAvatar: "/api/users/update-avatar",
-  uploadFile: "/api/aws/upload",
+  refresh: "/token/refresh/",
+  getTokens: "/users/login",
+  registration: "/users/registration",
+  forgotPassword: "/users/forgot-password",
+  updateProfile: "/users/update-profile",
+  updateAvatar: "/users/update-avatar",
+  uploadFile: "/aws/upload",
+  tokenRefresh : "/users/refresh-token",
 
+
+
+  createOrder: "/orders/create",
+  allOrders: "/orders/all",
   
-  resetPassword: "/api/reset-password/:uuid/:token",
+  resetPassword: "/reset-password/:uuid/:token",
 
   getCvById: "api/v1/user/resume-by-id/",
   allResumes: "api/v1/user/all-resumes/",
@@ -65,7 +69,6 @@ const routes = {
 ///user
 
   index: "/",
-  createOrder: "/create-order",
   cvById: "/resume/current/",
   coverLetterByIdPage: "/cv/current/",
   jobsDescriptions: "/jobs-descriptions",

@@ -63,9 +63,12 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 .link_active{
-    background: #657be5;
-    box-shadow: rgba(0, 0, 0, 0.1) 0rem 0.25rem 0.375rem -0.0625rem, rgba(0, 0, 0, 0.06) 0rem 0.125rem 0.25rem -0.0625rem;
+    background: #768cf7;
 
+}
+.link_active:hover{
+    background: #768cf7;
+    box-shadow: rgba(26, 115, 232, 0.4) 0rem 0.875rem 1.625rem -0.75rem, rgba(26, 115, 232, 0.15) 0rem 0.25rem 1.4375rem 0rem, rgba(26, 115, 232, 0.2) 0rem 0.5rem 0.625rem -0.3125rem;
 }
 
 .bottom{}

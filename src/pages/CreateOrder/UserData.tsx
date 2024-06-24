@@ -24,56 +24,18 @@ const ProfileSchema = Yup.object().shape({
   secret_answer: Yup.string(),
 });
 
-const authAPI = axios.create({
-  baseURL: routes.baseURL,
-  headers: {
-    'Content-Type': 'multipart/form-data',
-    "Authorization": `Bearer ${localStorageManager.getItem("access")}`
-  },
-});
 
-const Profile = () => {
-  const { userObject, updateUserData } = useAuth();
+
+const UserData = ({userObject}:any) => {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>(userObject?.avatar || '');
 
   const handleFormSubmit = async (userData: IUser) => {
-    if (userData) {
-      try {
-        const resposnse = await authAPI.put(routes.updateProfile, userData)
-        if (resposnse.status === 200) {
-          localStorageManager.setUser(resposnse.data.user)
-          toast.success(resposnse.data.message);
-        }
-      } catch (e: any) {
-        toast.error(e.message);
-      }
-    }
+
   };
 
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setAvatar(event.target.files[0]);
-      setAvatarUrl(URL.createObjectURL(event.target.files[0]));
-      try {
-        const uploadedFile = await uploadFile(event.target.files[0]);
-        if (uploadedFile.avatarUrl) {
-          const updateUser = await authAPI.put(routes.updateProfile, { avatar: uploadedFile.avatarUrl });
-          console.log(updateUser.data)
-          localStorageManager.setUser(updateUser.data.user);
-          setAvatarUrl(uploadedFile.avatarUrl)
-          toast.success("Профіль успішно оновлено");
 
-        }
-      } catch (error) {
-        console.error('Помилка при оновленні профілю', error);
-        toast.error("Не вдалося оновити профіль");
-        return "skdaljf"
-      }
-    }
-    else {
-      toast.error("Не вдалося оновити профіль");
-    }
   };
 
   if (!userObject) {
@@ -269,4 +231,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default UserData;

@@ -69,12 +69,14 @@ interface AuthContextInterface {
   ) => void;
 }
 
-const authAPI = axios.create({
-  baseURL: routes.baseURL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// const authAPI = axios.create({
+//   baseURL: routes.baseURL,
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
+import authAPI from "@/http";
+
 
 authAPI.interceptors.response.use(
   (response) => response,
@@ -198,6 +200,7 @@ export const AuthProvider = ({ children }: PropsWithChildren<unknown>) => {
   const logout = () => {
     resetToken();
     localStorageManager.removeUser();
+    localStorageManager.setUser({});
     setAuthToken("");
     setAuthRefreshToken("");
   };

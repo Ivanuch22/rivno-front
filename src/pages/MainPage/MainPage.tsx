@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -14,66 +13,91 @@ import {
 } from "@mui/material";
 import { localStorageManager } from "@/services";
 import routes from "@/routes/index";
-import styles from "./MainPage.module.css";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/Auth";
+import authAPI from "@/http";
+import style from "./MainPage.module.css"
 
-const authAPI = axios.create({
-  baseURL: routes.baseURL,
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${localStorageManager.getItem("access")}`,
-  },
-});
+
+
 
 const MainPage = () => {
+  const queryClient = useQueryClient()
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
+  const { handleAuth, logout } = useAuth();
+
+
+
+  const getOrders = async () => {
+    try {
+      const response = await authAPI.get(`${routes.allOrders}?sortOrder=desc`);
+      console.log("fetching is success")
+      return response.data.orders || []
+    } catch (error: any) {
+      console.log(error)
+      logout();
+      navigate(routes.auth)
+      return error
+    }
+
+  }
+  const { isPending, error, data }: any = useQuery({ queryKey: ['orders'], queryFn: getOrders })
+
+
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await authAPI.get("/api/orders/all");
-        setOrders(response.data.orders);
-      } catch (error) {
-        console.error("Failed to fetch orders:", error);
-      }
-    };
+    if (!isPending && data.length > 0) {
+      setOrders(data);
+      console.log(data)
+    }
+  }, [data]);
 
-    fetchOrders();
-  }, []);
 
+  if (isPending) return <CircularProgress />
+
+  if (error) return 'An error has occurred: ' + error.message
   return (
     <section>
       <div className="container">
-        <Box display="flex" flexWrap="wrap" justifyContent="center">
-          {orders.map((order:any) => (
-            <Card key={order.id} style={{ margin: 10, width: 250 }}>
-              <CardContent>
-                <Avatar alt={order.firstName} src={order.photo1} style={{ width: 60, height: 60, margin: 'auto' }} />
-                <Typography variant="h6" component="div">
-                  {order.firstName} {order.lastName}
-                </Typography>
-                <Typography color="textSecondary" gutterBottom>
-                  {order.middleName}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  <strong>ID:</strong> {order.id}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  <strong>Age:</strong> {order.age}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  <strong>Gender:</strong> {order.gender}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  <strong>Treatment:</strong> {order.treatment}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  <strong>Status:</strong> {order.status_id}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small">Chat</Button>
-              </CardActions>
-            </Card>
+        <Box className={style.box} >
+          {orders.map((order: any) => (
+            <Link key={order.id + order.firstName} to={`/order/${order.id}`}>
+              <Card className={style.cart} >
+                <CardContent>
+                  <Avatar alt={order.firstName} src={order.photo1} style={{ width: 60, height: 60, margin: 'auto' }} />
+                  <Typography variant="h6" component="div">
+                    {order.firstName} {order.lastName}
+                  </Typography>
+                  <Typography color="textSecondary" gutterBottom>
+                    {order.middleName}
+                  </Typography>
+                  <Typography variant="body2" component="p">
+                    <strong>Ід:</strong> {order.id}
+                  </Typography>
+                  <Typography variant="body2" component="p">
+                    <strong>Вік:</strong> {order.age}
+                  </Typography>
+                  <Typography variant="body2" component="p">
+                    <strong>Стать:</strong> {order.gender}
+                  </Typography>
+                  <Typography variant="body2" component="p">
+                    <strong>Статус:</strong> {order.status}
+                  </Typography>
+                  <Typography variant="body2" component="p">
+                    <strong>Дата створення:</strong> {new Date(order.created_at).toLocaleDateString('uk-UA', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: '2-digit'
+                    })}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small">Відкрити</Button>
+                </CardActions>
+              </Card>
+            </Link>
           ))}
         </Box>
       </div>

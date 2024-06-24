@@ -5,15 +5,20 @@ import style from "./style.module.css";
 const Header = () => {
   const location = useLocation();
 
-  const getPageTitle = (path: string) => {
+  const getPageTitle = (path:string) => {
     switch (path) {
-        case "/create-order":
-            return "Замовити";
+      case "/create-order":
+        return "Замовити";
       case "/":
         return "Головна";
       case "/profile":
         return "Профіль";
       default:
+        const orderMatch = path.match(/^\/order\/(\d+)$/);
+        if (orderMatch) {
+          const orderId = orderMatch[1];
+          return `Замовлення № ${orderId}`;
+        }
         return "Сторінка";
     }
   };
@@ -26,7 +31,6 @@ const Header = () => {
         {pageTitle}
       </div>
       <div className={style.header_right}>
-        {/* Інший вміст */}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { TextField, Grid, Typography, Box, Button, IconButton, Avatar } from "@m
 import DeleteIcon from '@mui/icons-material/Delete';
 import scan1DefaultImage from "./defaulImages/123.png";
 import scan2DefaultImage from "./defaulImages/1234.png";
+import { Link } from "react-router-dom";
 
 const defaultImages = {
   scan1: scan1DefaultImage,
@@ -15,7 +16,7 @@ const photoNames = [
     "Скан 2"
 ]
 
-const Step5 = ({handleFileUpload}:any) => {
+const Step5 = ({readOnly,handleFileUpload}:any) => {
   const { setFieldValue ,values} = useFormikContext<any>();
   const [images, setImages] = useState({
     scan1: values.scan1||defaultImages.scan1,
@@ -94,12 +95,21 @@ const Step5 = ({handleFileUpload}:any) => {
                     height: 'auto',
                   }}
                 >
-                  <Avatar
-                    src={images[name as keyof typeof defaultImages]}
-                    alt={name}
-                    variant="rounded"
-                    sx={{ width: '100%', height: 'auto', marginBottom: 2 }}
-                  />
+                  {readOnly ?
+                    <Link target="_blank" rel="noopener noreferrer" to={images[name as keyof typeof defaultImages]} >
+                      <Avatar
+                        src={images[name as keyof typeof defaultImages]}
+                        alt={name}
+                        variant="rounded"
+                        sx={{ width: '100%', height: '85%', marginBottom: 2 }}
+                      />
+                    </Link> :
+                    <Avatar
+                      src={images[name as keyof typeof defaultImages]}
+                      alt={name}
+                      variant="rounded"
+                      sx={{ width: '100%', height: '85%', marginBottom: 2 }}
+                    />}
                   <IconButton
                     onClick={() => handleImageRemove(name)}
                     sx={{ position: 'absolute', top: 8, left: 8, backgroundColor: 'white' }}
@@ -108,6 +118,7 @@ const Step5 = ({handleFileUpload}:any) => {
                   <Typography variant="body2">{photoNames[index]}</Typography>
                 </Box>
                 <input
+                  disabled={readOnly}
                   type="file"
                   accept="image/*"
                   style={{ display: 'none' }}
@@ -124,6 +135,9 @@ const Step5 = ({handleFileUpload}:any) => {
           ))}
           <Grid item xs={12}>
             <Field
+              inputProps={{
+                readOnly:readOnly
+              }}
               name="comments"
               as={TextField}
               label="Коментар"

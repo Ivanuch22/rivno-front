@@ -3,14 +3,7 @@ import { Formik, Form } from "formik";
 import { Box, Button, Stepper, Step, StepLabel, Typography, Container } from "@mui/material";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-
-const authAPI = axios.create({
-  baseURL: routes.baseURL,
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization" :`Bearer ${localStorageManager.getItem("access")}`
-  },
-});
+import authAPI from "@/http";
 
 
 import Step1 from "./Step1";
@@ -22,6 +15,7 @@ import { localStorageManager } from "@/services";
 import routes from "@/routes";
 import uploadFile from "@/services/fileUploadService";
 import axios from "axios";
+import { toast } from "react-toastify";
 const validationSchemas = [
   Yup.object().shape({
     firstName: Yup.string().required("Обов'язково"),
@@ -158,17 +152,18 @@ const CreateOrder = (props: any) => {
   const handleSubmit = async (values: any) => {
     console.log(values,"sdfs")
     try {
-      console.log('hell')
-      // Submit data to server
-      const response = await authAPI.post(`/api/orders/create`, {order:values});
-      console.log("Order submitted successfully:", response.data);
-
+      const response = await authAPI.post(routes.createOrder, {order:values});
+      if(response.status===200){
+        toast.success("Замовлення успішно створене")
+      }
       // Clear local storage and reset form
       // localStorageManager.removeItem("orderForm");
       setActiveStep(0);
       navigate("/");
     } catch (error) {
       console.error("Failed to submit order:", error);
+      toast.error("Щось тут не так")
+
     }
   };
   const handleFileUpload = async (setFieldValue: any, fieldName: any, file: any) => {

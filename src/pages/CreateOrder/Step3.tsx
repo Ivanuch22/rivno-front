@@ -8,6 +8,7 @@ import photo4 from "./defaulImages/4.png";
 import photo5 from "./defaulImages/5.png";
 import photo6 from "./defaulImages/6.png";
 import { localStorageManager } from "@/services";
+import { Link } from "react-router-dom";
 
 const defaultImages = {
   photo1: photo1,
@@ -27,7 +28,7 @@ const photoNames = [
   "6. Латеральний вид зліва"
 ];
 
-const Step3 = ({ handleFileUpload }: any) => {
+const Step3 = ({ readOnly=false, handleFileUpload }: any) => {
   const { setFieldValue, values } = useFormikContext<any>();
 
   const [photos, setPhotos] = useState({
@@ -118,16 +119,27 @@ const Step3 = ({ handleFileUpload }: any) => {
                     textAlign: 'center'
                   }}
                 >
-                  <Avatar
-                    src={photos[photoName as keyof typeof defaultImages]}
-                    alt={photoName}
-                    variant="rounded"
-                    sx={{ width: '100%', height: '85%', marginBottom: 2 }}
-                  />
+                  {readOnly ?
+                    <Link target="_blank" rel="noopener noreferrer" to={photos[photoName as keyof typeof defaultImages]} >
+                      <Avatar
+                        src={photos[photoName as keyof typeof defaultImages]}
+                        alt={photoName}
+                        variant="rounded"
+                        sx={{ width: '100%', height: '85%', marginBottom: 2 }}
+                      />
+                    </Link> :
+                    <Avatar
+                      src={photos[photoName as keyof typeof defaultImages]}
+                      alt={photoName}
+                      variant="rounded"
+                      sx={{ width: '100%', height: '85%', marginBottom: 2 }}
+                    />}
+
                   <Typography variant="body2">{photoNames[index]}</Typography>
                 </Box>
 
                 <input
+                  disabled={readOnly}
                   type="file"
                   accept="image/*"
                   style={{ display: 'none' }}
