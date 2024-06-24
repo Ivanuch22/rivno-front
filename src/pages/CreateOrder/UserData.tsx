@@ -213,17 +213,6 @@ const UserData = ({userObject}:any) => {
                 />
               </Grid>
             </Grid>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <Button
-                variant="contained"
-                style={{ color: "#fff" }}
-                type="submit"
-                disabled={!isValid || !dirty}
-                sx={{ fontFamily: 'inherit' }}
-              >
-                Оновити профіль
-              </Button>
-            </Box>
           </Form>
         )}
       </Formik>

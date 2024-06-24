@@ -227,11 +227,20 @@ const OrderPage = () => {
                 <Button
                     variant="contained"
                     onClick={() => {
-                        if (activeStep !== 4) {
-                            handleNext();
-                        } else {
-                            handleSubmit(savedValues);
+                        if(savedValues.user){
+                            if (activeStep !== 5) {
+                                handleNext();
+                            } else {
+                                handleSubmit(savedValues);
+                            }
+                        }else{
+                            if (activeStep !== 4) {
+                                handleNext();
+                            } else {
+                                handleSubmit(savedValues);
+                            }
                         }
+                        
                     }}
                     sx={{
                         backgroundColor: "#657be5",
@@ -241,7 +250,7 @@ const OrderPage = () => {
                         padding: "10px 20px",
                     }}
                 >
-                    {activeStep === 4 ? "Закрити" : "Вперед"}
+                    {savedValues.user?activeStep === 5 ? "Закрити" : "Вперед":activeStep === 4 ? "Закрити" : "Вперед"}
                 </Button>
             </Box>
         </Container>
