@@ -75,7 +75,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen />
-        {showDevtools && (
+        {false && (
           <React.Suspense fallback={null}>
             <ReactQueryDevtoolsProduction />
           </React.Suspense>
