@@ -74,12 +74,12 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen />
+        {/* <ReactQueryDevtools initialIsOpen={false} />
         {false && (
           <React.Suspense fallback={null}>
             <ReactQueryDevtoolsProduction />
           </React.Suspense>
-        )}
+        )} */}
 
       </QueryClientProvider>
     </>
