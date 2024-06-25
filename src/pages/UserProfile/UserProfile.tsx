@@ -3,13 +3,12 @@ import { Container, Box, Typography, Avatar, Grid, TextField, Button, IconButton
 import { useAuth } from "@/context/Auth";
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import EditIcon from '@mui/icons-material/Edit';
 import routes from '@/routes';
 import { localStorageManager } from "@/services"
 import { IUser } from '@/interfaces/user.interfaces';
 import uploadFile from '@/services/fileUploadService';
-// import authAPI from '@/http';
+import authAPI from '@/http';
 import { toast } from 'react-toastify';
 
 const ProfileSchema = Yup.object().shape({
@@ -25,12 +24,7 @@ const ProfileSchema = Yup.object().shape({
   secret_answer: Yup.string(),
 });
 
-const authAPI = axios.create({
-  baseURL: routes.baseURL,
-  headers: {
-    "Authorization": `Bearer ${localStorageManager.getItem("access")}`
-  },
-});
+
 
 const Profile = () => {
   const { userObject, updateUserData } = useAuth();
@@ -41,7 +35,8 @@ const Profile = () => {
       try {
         const resposnse = await authAPI.put(`${routes.updateProfile}`, userData,)
         if (resposnse.status === 200) {
-          updateUserData(resposnse.data.user)
+          localStorageManager.removeUser()
+          localStorageManager.setUser(resposnse.data.user)
           toast.success(resposnse.data.message);
         }
       } catch (e: any) {
@@ -57,8 +52,8 @@ const Profile = () => {
         const uploadedFile = await uploadFile(event.target.files[0]);
         if (uploadedFile.avatarUrl) {
           const updateUser = await authAPI.put(`${routes.updateProfile}`, { avatar: uploadedFile.avatarUrl.Location });
-          console.log(updateUser.data)
-          updateUserData(updateUser.data.user);
+          localStorageManager.removeUser()
+          localStorageManager.setUser(updateUser.data.user);
           setAvatarUrl(uploadedFile.avatarUrl.Location)
           toast.success("Профіль успішно оновлено");
 
