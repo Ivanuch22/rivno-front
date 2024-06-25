@@ -44,7 +44,7 @@ const Step2 = ({readOnly}:any) => {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h6">Лікування:</Typography>
-            <RadioGroup row  value={values.treatment} onChange={(e) => handleRadioChange("treatment", e.target.value)}>
+            <RadioGroup   value={values.treatment} onChange={(e) => handleRadioChange("treatment", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="upperJaw" control={<Radio />} label="Верхня щелепа" />
               <FormControlLabel disabled={readOnly} value="lowerJaw" control={<Radio />} label="Нижня щелепа" />
               <FormControlLabel disabled={readOnly} value="bothJaws" control={<Radio />} label="Обидві щелепи" />
@@ -66,7 +66,7 @@ const Step2 = ({readOnly}:any) => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "#657be5",
                   },
-                  "& .MuiOutlinedInput-root": {
+                  "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                     "&:hover fieldset": {
                       borderColor: "#657be5",
                     },
@@ -81,7 +81,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Корекція:</Typography>
-            <RadioGroup row  value={values.correction} onChange={(e) => handleRadioChange("correction", e.target.value)}>
+            <RadioGroup   value={values.correction} onChange={(e) => handleRadioChange("correction", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="frontSection" control={<Radio />} label="Фронтальний відділ 3-3" />
               <FormControlLabel disabled={readOnly} value="frontAndSide" control={<Radio />} label="Фронтальний та боковий 5-5" />
               <FormControlLabel disabled={readOnly} value="wholeJaw" control={<Radio />} label="Вся щелепа" />
@@ -103,7 +103,7 @@ const Step2 = ({readOnly}:any) => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "#657be5",
                   },
-                  "& .MuiOutlinedInput-root": {
+                  "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                     "&:hover fieldset": {
                       borderColor: "#657be5",
                     },
@@ -118,7 +118,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Використання додаткових інструментів:</Typography>
-            <RadioGroup row  value={values.additionalTools} onChange={(e) => handleRadioChange("additionalTools", e.target.value)}>
+            <RadioGroup   value={values.additionalTools} onChange={(e) => handleRadioChange("additionalTools", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="removableNonRemovable" control={<Radio />} label="Апарати знімні/незнімні" />
               <FormControlLabel disabled={readOnly} value="miniScrews" control={<Radio />} label="Мінігвинти" />
               <FormControlLabel disabled={readOnly} value="buttons" control={<Radio />} label="Кнопки" />
@@ -144,7 +144,7 @@ const Step2 = ({readOnly}:any) => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "#657be5",
                   },
-                  "& .MuiOutlinedInput-root": {
+                  "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                     "&:hover fieldset": {
                       borderColor: "#657be5",
                     },
@@ -159,7 +159,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Видалення зубів:</Typography>
-            <RadioGroup row  value={values.toothExtraction} onChange={(e) => handleRadioChange("toothExtraction", e.target.value)}>
+            <RadioGroup   value={values.toothExtraction} onChange={(e) => handleRadioChange("toothExtraction", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="wisdomTeethOnly" control={<Radio />} label="Тільки мудрості" />
               <FormControlLabel disabled={readOnly} value="otherTeeth" control={<Radio />} label="Інших зубів" />
               <FormControlLabel disabled={readOnly} value="noExtraction" control={<Radio />} label="Без видалення" />
@@ -181,7 +181,7 @@ const Step2 = ({readOnly}:any) => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "#657be5",
                   },
-                  "& .MuiOutlinedInput-root": {
+                  "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                     "&:hover fieldset": {
                       borderColor: "#657be5",
                     },
@@ -196,7 +196,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Корекція:</Typography>
-            <RadioGroup row  value={values.correction2} onChange={(e) => handleRadioChange("correction2", e.target.value)}>
+            <RadioGroup   value={values.correction2} onChange={(e) => handleRadioChange("correction2", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="crowding" control={<Radio />} label="Скупченості" />
               <FormControlLabel disabled={readOnly} value="class21" control={<Radio />} label="Класу 2,1" />
               <FormControlLabel disabled={readOnly} value="class22" control={<Radio />} label="Класу 2,2" />
@@ -225,7 +225,7 @@ const Step2 = ({readOnly}:any) => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "#657be5",
                   },
-                  "& .MuiOutlinedInput-root": {
+                  "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                     "&:hover fieldset": {
                       borderColor: "#657be5",
                     },
@@ -240,7 +240,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Ясенна посмішка:</Typography>
-            <RadioGroup row  value={values.gumSmileCorrection} onChange={(e) => handleRadioChange("gumSmileCorrection", e.target.value)}>
+            <RadioGroup   value={values.gumSmileCorrection} onChange={(e) => handleRadioChange("gumSmileCorrection", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="mandatory" control={<Radio />} label="Корегувати обовьязково з застосуванням необхідних інструментів" />
               <FormControlLabel disabled={readOnly} value="aligners" control={<Radio />} label="Корегування елайнерами" />
               <FormControlLabel disabled={readOnly} value="noCorrection" control={<Radio />} label="Не корегувати" />
@@ -249,7 +249,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Середня лінія:</Typography>
-            <RadioGroup row  value={values.midlineCorrection} onChange={(e) => handleRadioChange("midlineCorrection", e.target.value)}>
+            <RadioGroup   value={values.midlineCorrection} onChange={(e) => handleRadioChange("midlineCorrection", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="mandatory" control={<Radio />} label="Обовьязково корегувати з застосуванням необхідних інструментів для створення умов" />
               <FormControlLabel disabled={readOnly} value="aligners" control={<Radio />} label="Корегування елайнерами" />
               <FormControlLabel disabled={readOnly} value="noCorrection" control={<Radio />} label="Не корегувати" />
@@ -258,7 +258,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Сепарація:</Typography>
-            <RadioGroup row  value={values.separation} onChange={(e) => handleRadioChange("separation", e.target.value)}>
+            <RadioGroup   value={values.separation} onChange={(e) => handleRadioChange("separation", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="possible" control={<Radio />} label="Можлива" />
               <FormControlLabel disabled={readOnly} value="noSeparation" control={<Radio />} label="Без сепарації" />
             </RadioGroup>
@@ -266,7 +266,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Скарги:</Typography>
-            <RadioGroup row  value={values.complaints} onChange={(e) => handleRadioChange("complaints", e.target.value)}>
+            <RadioGroup   value={values.complaints} onChange={(e) => handleRadioChange("complaints", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="snoring" control={<Radio />} label="Біль у СНЩС" />
               <FormControlLabel disabled={readOnly} value="apnea" control={<Radio />} label="Нічне Апноє" />
               <FormControlLabel disabled={readOnly} value="bruxism" control={<Radio />} label="Бруксизм" />
@@ -286,7 +286,7 @@ const Step2 = ({readOnly}:any) => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "#657be5",
                   },
-                  "& .MuiOutlinedInput-root": {
+                  "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                     "&:hover fieldset": {
                       borderColor: "#657be5",
                     },
@@ -301,7 +301,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Чи планується ортопедичне лікування після ортодонтії:</Typography>
-            <RadioGroup row  value={values.orthopedicTreatment} onChange={(e) => handleRadioChange("orthopedicTreatment", e.target.value)}>
+            <RadioGroup   value={values.orthopedicTreatment} onChange={(e) => handleRadioChange("orthopedicTreatment", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="yes" control={<Radio />} label="Так" />
               <FormControlLabel disabled={readOnly} value="no" control={<Radio />} label="Ні" />
             </RadioGroup>
@@ -309,7 +309,7 @@ const Step2 = ({readOnly}:any) => {
 
           <Grid item xs={12}>
             <Typography variant="h6">Видавати капи:</Typography>
-            <RadioGroup row  value={values.issueCaps} onChange={(e) => handleRadioChange("issueCaps", e.target.value)}>
+            <RadioGroup   value={values.issueCaps} onChange={(e) => handleRadioChange("issueCaps", e.target.value)}>
               <FormControlLabel disabled={readOnly} value="gradually" control={<Radio />} label="Поступово" />
               <FormControlLabel disabled={readOnly} value="entireCourse" control={<Radio />} label="На весь курс лікування" />
             </RadioGroup>
@@ -334,7 +334,7 @@ const Step2 = ({readOnly}:any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },

@@ -32,23 +32,23 @@ const Step3 = ({ readOnly=false, handleFileUpload }: any) => {
   const { setFieldValue, values } = useFormikContext<any>();
 
   const [photos, setPhotos] = useState({
-    photo1: values.photo1 || defaultImages.photo1,
-    photo2: values.photo2 || defaultImages.photo2,
-    photo3: values.photo3 || defaultImages.photo3,
-    photo4: values.photo4 || defaultImages.photo4,
-    photo5: values.photo5 || defaultImages.photo5,
-    photo6: values.photo6 || defaultImages.photo6,
+    photo1: values.photo1?.Location || defaultImages.photo1,
+    photo2: values.photo2?.Location || defaultImages.photo2,
+    photo3: values.photo3?.Location || defaultImages.photo3,
+    photo4: values.photo4?.Location || defaultImages.photo4,
+    photo5: values.photo5?.Location || defaultImages.photo5,
+    photo6: values.photo6?.Location || defaultImages.photo6,
   });
 
   useEffect(() => {
     setPhotos((prev) => ({
       ...prev,
-      photo1: values.photo1 || defaultImages.photo1,
-      photo2: values.photo2 || defaultImages.photo2,
-      photo3: values.photo3 || defaultImages.photo3,
-      photo4: values.photo4 || defaultImages.photo4,
-      photo5: values.photo5 || defaultImages.photo5,
-      photo6: values.photo6 || defaultImages.photo6,
+      photo1: values.photo1?.Location || defaultImages.photo1,
+      photo2: values.photo2?.Location || defaultImages.photo2,
+      photo3: values.photo3?.Location || defaultImages.photo3,
+      photo4: values.photo4?.Location || defaultImages.photo4,
+      photo5: values.photo5?.Location || defaultImages.photo5,
+      photo6: values.photo6?.Location || defaultImages.photo6,
     }));
   }, [values]);
 
@@ -141,7 +141,6 @@ const Step3 = ({ readOnly=false, handleFileUpload }: any) => {
                 <input
                   disabled={readOnly}
                   type="file"
-                  accept="image/*"
                   style={{ display: 'none' }}
                   id={`file-input-${photoName}`}
                   onChange={(e) => {

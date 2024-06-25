@@ -51,7 +51,6 @@ const UserData = ({userObject}:any) => {
           sx={{ width: 100, height: 100, margin: '0 auto' }}
         />
         <input
-          accept="image/*"
           style={{ display: 'none' }}
           id="avatar-upload"
           type="file"

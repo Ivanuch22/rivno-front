@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Field, ErrorMessage, useFormikContext } from "formik";
-import { TextField, Grid, Typography, Box, Button, IconButton, Avatar } from "@mui/material";
+import { TextField, Grid, Typography, Box, IconButton, Avatar, CircularProgress } from "@mui/material";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import xrayDefaultImage from "./defaulImages/OPTG.png";
 import ctScanDefaultImage from "./defaulImages/TRG.png";
 import { Link } from "react-router-dom";
@@ -13,13 +17,17 @@ const defaultImages = {
 const photoNames = [
   "OПТГ",
   "ТРГ"
-]
+];
 
 const Step4 = ({ readOnly = false, handleFileUpload }: any) => {
   const { setFieldValue, values } = useFormikContext<any>();
   const [images, setImages] = useState({
-    xray: values.xray || defaultImages.xray,
-    ctScan: values.ctScan || defaultImages.ctScan,
+    xray: values.xray?.Location || defaultImages.xray,
+    ctScan: values.ctScan?.Location || defaultImages.ctScan,
+  });
+  const [uploadStatus, setUploadStatus] = useState({
+    xray: { uploading: false, success: false },
+    ctScan: { uploading: false, success: false },
   });
 
   const handleImageChange = (e: any, name: string) => {
@@ -43,12 +51,34 @@ const Step4 = ({ readOnly = false, handleFileUpload }: any) => {
       [name]: defaultImages[name as keyof typeof defaultImages],
     }));
     setFieldValue(name, null);
+    setUploadStatus((prev) => ({
+      ...prev,
+      [name]: { uploading: false, success: false },
+    }));
   };
 
-  const handleFileChange = (event: any, fieldName: any) => {
+  const handleFileChange = async (event: any, fieldName: any) => {
     const file = event.currentTarget.files[0];
     if (file) {
-      handleFileUpload(setFieldValue, fieldName, file);
+      setUploadStatus((prev) => ({
+        ...prev,
+        [fieldName]: { uploading: true, success: false },
+      }));
+
+      try {
+        await handleFileUpload(setFieldValue, fieldName, file);
+        setUploadStatus((prev) => ({
+          ...prev,
+          [fieldName]: { uploading: false, success: true },
+        }));
+        toast.success("Файл успішно завантажений");
+      } catch (error) {
+        setUploadStatus((prev) => ({
+          ...prev,
+          [fieldName]: { uploading: false, success: false },
+        }));
+        toast.error("Помилка завантаження файлу");
+      }
     }
   };
 
@@ -83,51 +113,57 @@ const Step4 = ({ readOnly = false, handleFileUpload }: any) => {
         <Grid container spacing={2}>
           {["xray", "ctScan"].map((name, index) => (
             <Grid item xs={12} sm={4} key={name}>
-              <label htmlFor={`file-input-${name}`}
-                style={{ cursor: "pointer" }}>
+              <label htmlFor={`file-input-${name}`} style={{ cursor: "pointer" }}>
                 <Box
                   sx={{
-                    position: 'relative',
-                    border: '1px solid red',
-                    borderRadius: '10px',
-                    padding: '16px',
-                    textAlign: 'center',
-                    height: 'auto',
+                    position: "relative",
+                    border: "1px solid red",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    textAlign: "center",
+                    minHeight: "100%",
                   }}
                 >
-
-                  {readOnly ?
-                    <Link target="_blank" rel="noopener noreferrer" to={images[name as keyof typeof defaultImages]} >
+                  {readOnly ? (
+                    <Link target="_blank" rel="noopener noreferrer" to={images[name as keyof typeof defaultImages]}>
                       <Avatar
                         src={images[name as keyof typeof defaultImages]}
                         alt={name}
                         variant="rounded"
-                        sx={{ width: '100%', height: '85%', marginBottom: 2 }}
+                        sx={{ width: "100%", aspectRatio: "1/1.2", height: "85%", marginBottom: 2 }}
                       />
-                    </Link> :
+                    </Link>
+                  ) : (
                     <Avatar
                       src={images[name as keyof typeof defaultImages]}
                       alt={name}
                       variant="rounded"
-                      sx={{ width: '100%', height: '85%', marginBottom: 2 }}
-                    />}
-                  <IconButton
-                    onClick={() => handleImageRemove(name)}
-                    sx={{ position: 'absolute', top: 8, left: 8, backgroundColor: 'white' }}
-                  >
-                  </IconButton>
+                      sx={{ width: "100%", aspectRatio: "1/1.2", height: "85%", marginBottom: 2 }}
+                    />
+                  )}
+                  {!readOnly && (
+                    <IconButton
+                      onClick={() => handleImageRemove(name)}
+                      sx={{ position: "absolute", top: 8, left: 8, backgroundColor: "white" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                  {uploadStatus[name].uploading ? (
+                    <CircularProgress sx={{ position: "absolute", bottom: 8, right: 8 }} />
+                  ) : uploadStatus[name].success ? (
+                    <CheckCircleIcon sx={{ position: "absolute", bottom: 8, right: 8, color: "green" }} />
+                  ) : null}
                   <Typography variant="body2">{photoNames[index]}</Typography>
-
                 </Box>
                 <input
                   type="file"
                   disabled={readOnly}
-                  accept="image/*"
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   id={`file-input-${name}`}
                   onChange={(e) => {
-                    handleFileChange(e, name)
-                    handleImageChange(e, name)
+                    handleFileChange(e, name);
+                    handleImageChange(e, name);
                   }}
                 />
               </label>
@@ -139,7 +175,7 @@ const Step4 = ({ readOnly = false, handleFileUpload }: any) => {
           <Grid item xs={12}>
             <Field
               inputProps={{
-                readOnly:readOnly
+                readOnly: readOnly,
               }}
               name="ctLink"
               as={TextField}
@@ -153,7 +189,7 @@ const Step4 = ({ readOnly = false, handleFileUpload }: any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },
@@ -170,7 +206,7 @@ const Step4 = ({ readOnly = false, handleFileUpload }: any) => {
           <Grid item xs={12}>
             <Field
               inputProps={{
-                readOnly:readOnly
+                readOnly: readOnly,
               }}
               name="comments"
               as={TextField}
@@ -186,7 +222,7 @@ const Step4 = ({ readOnly = false, handleFileUpload }: any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },

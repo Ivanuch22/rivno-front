@@ -14,6 +14,7 @@ const routes = {
 
   createOrder: "/orders/create",
   allOrders: "/orders/all",
+  downloadOrderFile:"/orders/getPresignedUrls",
   
   resetPassword: "/reset-password/:uuid/:token",
 

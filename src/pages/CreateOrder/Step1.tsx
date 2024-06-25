@@ -68,15 +68,21 @@ const Step1 = ({readOnly=false}: any) => {
               fullWidth
               required
               sx={{
+
                 "& label.Mui-focused": {
                   color: "#495057",
+                  
                 },
                 "& .MuiInput-underline:after": {
+                  
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
+
+
                   "&:hover fieldset": {
                     borderColor: "#657be5",
+
                   },
                   "&.Mui-focused fieldset": {
                     borderColor: "#657be5",
@@ -105,7 +111,7 @@ const Step1 = ({readOnly=false}: any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },
@@ -133,12 +139,14 @@ const Step1 = ({readOnly=false}: any) => {
                 "& label.Mui-focused": {
                   color: "#495057",
                 },
+                
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
+                    
                   },
                   "&.Mui-focused fieldset": {
                     borderColor: "#657be5",
@@ -167,7 +175,7 @@ const Step1 = ({readOnly=false}: any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },
@@ -198,7 +206,7 @@ const Step1 = ({readOnly=false}: any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },
@@ -242,7 +250,7 @@ const Step1 = ({readOnly=false}: any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },
@@ -273,7 +281,7 @@ const Step1 = ({readOnly=false}: any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },

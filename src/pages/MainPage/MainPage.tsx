@@ -22,6 +22,7 @@ import style from "./MainPage.module.css"
 
 
 
+
 const MainPage = () => {
   const queryClient = useQueryClient()
   const [orders, setOrders] = useState([]);
@@ -43,6 +44,16 @@ const MainPage = () => {
     }
 
   }
+
+  const extractUrl = (photo) => {
+    if (!photo) return '';
+    try {
+        const parsedPhoto = JSON.parse(photo);
+        return parsedPhoto.Location || '';
+    } catch (e) {
+        return photo;
+    }
+};
   const { isPending, error, data }: any = useQuery({ queryKey: ['orders'], queryFn: getOrders })
 
 
@@ -58,15 +69,19 @@ const MainPage = () => {
   if (isPending) return <CircularProgress />
 
   if (error) return 'An error has occurred: ' + error.message
+
+
   return (
     <section>
       <div className="container">
         <Box className={style.box} >
-          {orders.map((order: any) => (
+          {orders.map((order: any) => {
+            const photoUrl = extractUrl(order.photo1);
+          return(
             <Link key={order.id + order.firstName} to={`/order/${order.id}`}>
               <Card className={style.cart} >
                 <CardContent>
-                  <Avatar alt={order.firstName} src={order.photo1} style={{ width: 60, height: 60, margin: 'auto' }} />
+                  <Avatar alt={order.firstName} src={photoUrl} />
                   <Typography variant="h6" component="div">
                     {order.firstName} {order.lastName}
                   </Typography>
@@ -98,7 +113,7 @@ const MainPage = () => {
                 </CardActions>
               </Card>
             </Link>
-          ))}
+          )})}
         </Box>
       </div>
     </section>

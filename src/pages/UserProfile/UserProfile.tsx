@@ -9,6 +9,7 @@ import routes from '@/routes';
 import { localStorageManager } from "@/services"
 import { IUser } from '@/interfaces/user.interfaces';
 import uploadFile from '@/services/fileUploadService';
+// import authAPI from '@/http';
 import { toast } from 'react-toastify';
 
 const ProfileSchema = Yup.object().shape({
@@ -27,22 +28,20 @@ const ProfileSchema = Yup.object().shape({
 const authAPI = axios.create({
   baseURL: routes.baseURL,
   headers: {
-    'Content-Type': 'multipart/form-data',
     "Authorization": `Bearer ${localStorageManager.getItem("access")}`
   },
 });
 
 const Profile = () => {
   const { userObject, updateUserData } = useAuth();
-  const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string>(userObject?.avatar || '');
 
   const handleFormSubmit = async (userData: IUser) => {
     if (userData) {
       try {
-        const resposnse = await authAPI.put(routes.updateProfile, userData)
+        const resposnse = await authAPI.put(`${routes.updateProfile}`, userData,)
         if (resposnse.status === 200) {
-          localStorageManager.setUser(resposnse.data.user)
+          updateUserData(resposnse.data.user)
           toast.success(resposnse.data.message);
         }
       } catch (e: any) {
@@ -53,15 +52,14 @@ const Profile = () => {
 
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setAvatar(event.target.files[0]);
       setAvatarUrl(URL.createObjectURL(event.target.files[0]));
       try {
         const uploadedFile = await uploadFile(event.target.files[0]);
         if (uploadedFile.avatarUrl) {
-          const updateUser = await authAPI.put(routes.updateProfile, { avatar: uploadedFile.avatarUrl });
+          const updateUser = await authAPI.put(`${routes.updateProfile}`, { avatar: uploadedFile.avatarUrl.Location });
           console.log(updateUser.data)
-          localStorageManager.setUser(updateUser.data.user);
-          setAvatarUrl(uploadedFile.avatarUrl)
+          updateUserData(updateUser.data.user);
+          setAvatarUrl(uploadedFile.avatarUrl.Location)
           toast.success("Профіль успішно оновлено");
 
         }
@@ -89,7 +87,6 @@ const Profile = () => {
           sx={{ width: 100, height: 100, margin: '0 auto' }}
         />
         <input
-          accept="image/*"
           style={{ display: 'none' }}
           id="avatar-upload"
           type="file"

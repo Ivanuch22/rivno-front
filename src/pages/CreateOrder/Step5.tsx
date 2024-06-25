@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Field, ErrorMessage, useFormikContext } from "formik";
-import { TextField, Grid, Typography, Box, Button, IconButton, Avatar } from "@mui/material";
+import { TextField, Grid, Typography, Box, IconButton, Avatar, CircularProgress } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import scan1DefaultImage from "./defaulImages/123.png";
 import scan2DefaultImage from "./defaulImages/1234.png";
 import { Link } from "react-router-dom";
@@ -12,15 +15,19 @@ const defaultImages = {
 };
 
 const photoNames = [
-    "Скан 1",
-    "Скан 2"
-]
+  "Скан 1",
+  "Скан 2"
+];
 
-const Step5 = ({readOnly,handleFileUpload}:any) => {
-  const { setFieldValue ,values} = useFormikContext<any>();
+const Step5 = ({ readOnly, handleFileUpload }: any) => {
+  const { setFieldValue, values } = useFormikContext<any>();
   const [images, setImages] = useState({
-    scan1: values.scan1||defaultImages.scan1,
-    scan2: values.scan2||defaultImages.scan2,
+    scan1: values.scan1?.Location || defaultImages.scan1,
+    scan2: values.scan2?.Location || defaultImages.scan2,
+  });
+  const [uploadStatus, setUploadStatus] = useState({
+    scan1: { uploading: false, success: false },
+    scan2: { uploading: false, success: false },
   });
 
   const handleImageChange = (e: any, name: string) => {
@@ -44,14 +51,37 @@ const Step5 = ({readOnly,handleFileUpload}:any) => {
       [name]: defaultImages[name as keyof typeof defaultImages],
     }));
     setFieldValue(name, null);
+    setUploadStatus((prev) => ({
+      ...prev,
+      [name]: { uploading: false, success: false },
+    }));
   };
 
-  const handleFileChange = (event: any, fieldName: any) => {
+  const handleFileChange = async (event: any, fieldName: any) => {
     const file = event.currentTarget.files[0];
     if (file) {
-      handleFileUpload(setFieldValue, fieldName, file);
+      setUploadStatus((prev) => ({
+        ...prev,
+        [fieldName]: { uploading: true, success: false },
+      }));
+
+      try {
+        await handleFileUpload(setFieldValue, fieldName, file);
+        setUploadStatus((prev) => ({
+          ...prev,
+          [fieldName]: { uploading: false, success: true },
+        }));
+        toast.success(`${photoNames[fieldName === "scan1" ? 0 : 1]} успішно завантажено`);
+      } catch (error) {
+        setUploadStatus((prev) => ({
+          ...prev,
+          [fieldName]: { uploading: false, success: false },
+        }));
+        toast.error(`Помилка завантаження ${photoNames[fieldName === "scan1" ? 0 : 1]}`);
+      }
     }
   };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", margin: "0 auto", width: "100%" }}>
       <Box
@@ -83,49 +113,58 @@ const Step5 = ({readOnly,handleFileUpload}:any) => {
         <Grid container spacing={2}>
           {["scan1", "scan2"].map((name, index) => (
             <Grid item xs={12} sm={4} key={name}>
-              <label htmlFor={`file-input-${name}`}
-               style={{ cursor: "pointer" }}>
+              <label htmlFor={`file-input-${name}`} style={{ cursor: "pointer" }}>
                 <Box
                   sx={{
-                    position: 'relative',
-                    border: '1px solid red',
-                    borderRadius: '10px',
-                    padding: '16px',
-                    textAlign: 'center',
-                    height: 'auto',
+                    position: "relative",
+                    border: "1px solid red",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    textAlign: "center",
+                    height: "auto",
                   }}
                 >
-                  {readOnly ?
-                    <Link target="_blank" rel="noopener noreferrer" to={images[name as keyof typeof defaultImages]} >
+                  {readOnly ? (
+                    <Link target="_blank" rel="noopener noreferrer" to={images[name as keyof typeof defaultImages]}>
                       <Avatar
                         src={images[name as keyof typeof defaultImages]}
                         alt={name}
                         variant="rounded"
-                        sx={{ width: '100%', height: '85%', marginBottom: 2 }}
+                        sx={{ width: "100%", height: "85%", marginBottom: 2 }}
                       />
-                    </Link> :
+                    </Link>
+                  ) : (
                     <Avatar
                       src={images[name as keyof typeof defaultImages]}
                       alt={name}
                       variant="rounded"
-                      sx={{ width: '100%', height: '85%', marginBottom: 2 }}
-                    />}
-                  <IconButton
-                    onClick={() => handleImageRemove(name)}
-                    sx={{ position: 'absolute', top: 8, left: 8, backgroundColor: 'white' }}
-                  >
-                  </IconButton>
+                      sx={{ width: "100%", height: "85%", marginBottom: 2 }}
+                    />
+                  )}
+                  {!readOnly && (
+                    <IconButton
+                      onClick={() => handleImageRemove(name)}
+                      sx={{ position: "absolute", top: 8, left: 8, backgroundColor: "white" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                  {uploadStatus[name].uploading ? (
+                    <CircularProgress sx={{ position: "absolute", bottom: 8, right: 8 }} />
+                  ) : uploadStatus[name].success ? (
+                    <CheckCircleIcon sx={{ position: "absolute", bottom: 8, right: 8, color: "green" }} />
+                  ) : null}
                   <Typography variant="body2">{photoNames[index]}</Typography>
                 </Box>
                 <input
-                  disabled={readOnly}
                   type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
+                  disabled={readOnly}
+                  style={{ display: "none" }}
                   id={`file-input-${name}`}
                   onChange={(e) => {
-                    handleFileChange(e,name)
-                    handleImageChange(e, name)}}
+                    handleFileChange(e, name);
+                    handleImageChange(e, name);
+                  }}
                 />
               </label>
               <ErrorMessage name={name}>
@@ -136,7 +175,7 @@ const Step5 = ({readOnly,handleFileUpload}:any) => {
           <Grid item xs={12}>
             <Field
               inputProps={{
-                readOnly:readOnly
+                readOnly: readOnly,
               }}
               name="comments"
               as={TextField}
@@ -152,7 +191,7 @@ const Step5 = ({readOnly,handleFileUpload}:any) => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },
@@ -167,11 +206,9 @@ const Step5 = ({readOnly,handleFileUpload}:any) => {
             </ErrorMessage>
           </Grid>
         </Grid>
-
-
       </Box>
     </Box>
-  );
-};
+  )
+}
 
 export default Step5;

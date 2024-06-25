@@ -14,11 +14,10 @@ import Step5 from "./Step5";
 import { localStorageManager } from "@/services";
 import routes from "@/routes";
 import uploadFile from "@/services/fileUploadService";
-import axios from "axios";
 import { toast } from "react-toastify";
 const validationSchemas = [
   Yup.object().shape({
-    firstName: Yup.string().required("Обов'язково"),
+    firstName: Yup.string().required("Обов'язково").min(2, 'Too Short!'),
     lastName: Yup.string().required("Обов'язково"),
     middleName: Yup.string().required("Обов'язково"),
     phone: Yup.string().required("Обов'язково"),
@@ -141,31 +140,34 @@ const CreateOrder = (props: any) => {
   const [savedValues, setSavedValues] = useState(localStorageManager.getItem("orderForm") || initialValues);
   const navigate = useNavigate();
 
-  const handleNext = () => {
+  const handleNext = (isValid: boolean) => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleSubmit = async (values: any) => {
-    console.log(values,"sdfs")
+  const handleSubmit = async (values: any, actions: any) => {
+    console.log(values, "sdfs");
     try {
-      const response = await authAPI.post(routes.createOrder, {order:values});
-      if(response.status===200){
-        toast.success("Замовлення успішно створене")
+      const response = await authAPI.post(routes.createOrder, { order: values });
+      if (response.status === 200) {
+        toast.success("Замовлення успішно створене");
+        // Clear local storage and reset form
+        localStorageManager.removeItem("orderForm");
+        actions.resetForm({ values: initialValues });
+        setSavedValues(initialValues);
+        setActiveStep(0);
+        navigate("/");
       }
-      // Clear local storage and reset form
-      // localStorageManager.removeItem("orderForm");
-      setActiveStep(0);
-      navigate("/");
     } catch (error) {
       console.error("Failed to submit order:", error);
-      toast.error("Щось тут не так")
-
+      toast.error("Щось тут не так");
     }
   };
+
   const handleFileUpload = async (setFieldValue: any, fieldName: any, file: any) => {
     try {
       const uploadedFile = await uploadFile(file);
@@ -175,6 +177,7 @@ const CreateOrder = (props: any) => {
         ...getFormFromLocalStorage,
         [fieldName]: uploadedFile.avatarUrl
       };
+      console.log(uploadedFile)
 
       localStorageManager.setItem("orderForm", updatedForm);
       setFieldValue(fieldName, uploadedFile.avatarUrl);
@@ -203,7 +206,7 @@ const CreateOrder = (props: any) => {
   ];
 
   return (
-    <Container maxWidth="md">
+    <Container  >
       <Stepper activeStep={activeStep} sx={{ marginBottom: "20px" }}>
         {stepsName.map((label, index) => (
           <Step key={index}>
@@ -214,65 +217,67 @@ const CreateOrder = (props: any) => {
       </Stepper>
 
       <Formik
-
         initialValues={savedValues}
         validationSchema={validationSchemas[activeStep]}
         onSubmit={(values, actions) => {
-          handleSubmit(values);
+          handleSubmit(values, actions);
           actions.setSubmitting(false);
-          actions.resetForm(initialValues);
-        }
-        }
+        }}
 
       >
-        {({ values, isValid, isSubmitting, submitForm }) => {
+        {({ values,errors, isValid, isSubmitting, submitForm }) => {
+
           useEffect(() => {
             localStorageManager.setItem("orderForm", values);
             setSavedValues(values);
             
           }, [values]);
 
-          return <Form
+          return <>
+          <Form
             style={{ overflowY: "scroll", height: "70vh", display: "block" }}
-          >{steps[activeStep]}</Form>;
+          >{steps[activeStep]}</Form>
+          <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
+          <Button
+            disabled={activeStep == 0}
+            variant="contained"
+            onClick={handleBack}
+            sx={{
+              backgroundColor: "#657be5",
+              "&:hover": {
+                backgroundColor: "#657be25",
+              },
+              padding: "10px 20px",
+            }}
+          >
+            Назад
+          </Button>
+          <Button
+            variant="contained"
+            onClick={()=>{
+              if(activeStep !== 4){
+
+                handleNext(isValid)
+              }else{
+                submitForm();
+              }
+            }   }
+            sx={{
+              backgroundColor: "#657be5",
+              "&:hover": {
+                backgroundColor: "#657be5",
+              },
+              padding: "10px 20px",
+            }}
+          >
+            {activeStep === 4 ? "Надіслати" : "Вперед"}
+          </Button>
+        </Box>
+        </>
         }}
 
       </Formik>
-      <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-        <Button
-          disabled={activeStep == 0}
-          variant="contained"
-          onClick={handleBack}
-          sx={{
-            backgroundColor: "#657be5",
-            "&:hover": {
-              backgroundColor: "#657be25",
-            },
-            padding: "10px 20px",
-          }}
-        >
-          Назад
-        </Button>
-        <Button
-          variant="contained"
-          onClick={()=>{
-            if(activeStep !== 4){
-              handleNext()
-            }else{
-              handleSubmit(savedValues)
-            }
-          }   }
-          sx={{
-            backgroundColor: "#657be5",
-            "&:hover": {
-              backgroundColor: "#657be5",
-            },
-            padding: "10px 20px",
-          }}
-        >
-          {activeStep === 4 ? "Надіслати" : "Вперед"}
-        </Button>
-      </Box>
+
     </Container>
   );
 };

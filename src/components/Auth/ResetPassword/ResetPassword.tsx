@@ -79,7 +79,7 @@ const ResetPassword: React.FC = () => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },
@@ -118,7 +118,7 @@ const ResetPassword: React.FC = () => {
                 "& .MuiInput-underline:after": {
                   borderBottomColor: "#657be5",
                 },
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-root": {                 borderRadius: "20px",
                   "&:hover fieldset": {
                     borderColor: "#657be5",
                   },

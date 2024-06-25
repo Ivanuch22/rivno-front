@@ -13,6 +13,9 @@ import Step5 from "../CreateOrder/Step5";
 import routes from "@/routes";
 import UserData from "../CreateOrder/UserData";
 
+import DownloadButton from "../MainPage/DownloadButton";
+
+
 const validationSchemas = [
     Yup.object().shape({
         firstName: Yup.string().required("Обов'язково"),
@@ -130,25 +133,41 @@ const initialValues = {
     ctLink: "",
     scan1: null,
     scan2: null,
-    user:null,
+    user: null,
 };
 
 const OrderPage = () => {
     const params = useParams();
     const [activeStep, setActiveStep] = useState(0);
     const [savedValues, setSavedValues] = useState(initialValues);
+    const [savedValueKeys, setSavedValueKeys] = useState([])
     const navigate = useNavigate();
+
+    const fieldsToConvert = [
+        'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6',
+        'xray', 'ctScan', 'scan1', 'scan2'
+    ];
 
     const getOrder = async () => {
         const response = await authAPI.get(`/orders/${params.orderId}`);
         return response.data;
     };
 
-    const { isPending, error, data }:any = useQuery({ queryKey: [`orders${params.orderId}`], queryFn: getOrder });
+    const { isPending, error, data }: any = useQuery({ queryKey: [`orders${params.orderId}`], queryFn: getOrder });
 
     useEffect(() => {
         if (data?.order) {
-            setSavedValues(data.order);
+            let newObj = { ...data.order }
+            const newFilterdObj: any = [];
+
+            fieldsToConvert.forEach(field => {
+                if (newObj[field] && typeof newObj[field] === 'string') {
+                    newObj[field] = JSON.parse(newObj[field]);
+                    newFilterdObj.push(newObj[field].Key)
+                }
+            });
+            setSavedValueKeys(newFilterdObj.filter(element=>element))
+            setSavedValues(newObj);
         }
     }, [data]);
 
@@ -160,7 +179,7 @@ const OrderPage = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleSubmit = async (values:any) => {
+    const handleSubmit = async (values: any) => {
         navigate(routes.index)
     };
 
@@ -170,13 +189,15 @@ const OrderPage = () => {
         <Step3 key="step3" readOnly={true} />,
         <Step4 key="step4" readOnly={true} />,
         <Step5 key="step5" readOnly={true} />,
-        savedValues.user?<UserData key="step5" userObject= {savedValues.user} readOnly={true} />:null,
+        savedValues.user ? <UserData key="step5" userObject={savedValues.user} readOnly={true} /> : null,
     ];
-    const stepsName = savedValues.user? ["Дані про пацієнта", "План лікування", "Фото", "Рентгенограма + КТ", "Скани/Відбитки","Данні про лікаря"]:["Дані про пацієнта", "План лікування", "Фото", "Рентгенограма + КТ", "Скани/Відбитки"];
+    const stepsName = savedValues.user ? ["Дані про пацієнта", "План лікування", "Фото", "Рентгенограма + КТ", "Скани/Відбитки", "Данні про лікаря"] : ["Дані про пацієнта", "План лікування", "Фото", "Рентгенограма + КТ", "Скани/Відбитки"];
 
     if (isPending) return <CircularProgress />;
 
     if (error) return 'An error has occurred: ' + error.message;
+
+    const fileKeys = [savedValues.photo1, savedValues.photo2, savedValues.photo3, savedValues.photo4, savedValues.photo5]; // Assuming 'photo1' is the file key
 
     return (
         <Container maxWidth="md">
@@ -224,23 +245,24 @@ const OrderPage = () => {
                 >
                     Назад
                 </Button>
+                <DownloadButton fileKeys={savedValueKeys} />
                 <Button
                     variant="contained"
                     onClick={() => {
-                        if(savedValues.user){
+                        if (savedValues.user) {
                             if (activeStep !== 5) {
                                 handleNext();
                             } else {
                                 handleSubmit(savedValues);
                             }
-                        }else{
+                        } else {
                             if (activeStep !== 4) {
                                 handleNext();
                             } else {
                                 handleSubmit(savedValues);
                             }
                         }
-                        
+
                     }}
                     sx={{
                         backgroundColor: "#657be5",
@@ -250,7 +272,7 @@ const OrderPage = () => {
                         padding: "10px 20px",
                     }}
                 >
-                    {savedValues.user?activeStep === 5 ? "Закрити" : "Вперед":activeStep === 4 ? "Закрити" : "Вперед"}
+                    {savedValues.user ? activeStep === 5 ? "Закрити" : "Вперед" : activeStep === 4 ? "Закрити" : "Вперед"}
                 </Button>
             </Box>
         </Container>
