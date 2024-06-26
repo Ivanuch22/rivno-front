@@ -1,5 +1,5 @@
 const routes = {
-  baseURL: "https://api.rivno.com.ua/api",
+  baseURL: import.meta.env.VITE_REACT_APP_SERVER_URL,
   auth: "/auth",
   refresh: "/token/refresh/",
   getTokens: "/users/login",

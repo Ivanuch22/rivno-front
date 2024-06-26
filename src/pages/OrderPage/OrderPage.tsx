@@ -200,7 +200,7 @@ const OrderPage = () => {
     const fileKeys = [savedValues.photo1, savedValues.photo2, savedValues.photo3, savedValues.photo4, savedValues.photo5]; // Assuming 'photo1' is the file key
 
     return (
-        <Container maxWidth="md">
+        <Container >
             <Stepper activeStep={activeStep} sx={{ marginBottom: "20px" }}>
                 {stepsName.map((label, index) => (
                     <Step key={index}>
