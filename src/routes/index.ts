@@ -68,6 +68,7 @@ const routes = {
 
   user: "/api/v1/user/data/",
 ///user
+  me:"/users/auth",
 
   index: "/",
   cvById: "/resume/current/",

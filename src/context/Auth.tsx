@@ -95,7 +95,7 @@ const forgotPasswordMutation = (userData: IForgotFormValues) =>
   authAPI.post(routes.forgotPassword, userData).then((res) => res.data);
 
 const putUserData = (userData: IUser) =>
-  authAPI.put(routes.updateProfiel, userData).then((res) => res.data);
+  authAPI.put(routes.updateProfile, userData).then((res) => res.data);
 
 export const AuthContext = createContext<AuthContextInterface | null>(null);
 

@@ -1,7 +1,6 @@
 .sidebar{
     position: relative;
-    min-width: 180px;
-    width: 20%;
+
     border-radius: 20px;
     overflow: hidden;
     padding: 20px 10px 30px;
@@ -12,6 +11,16 @@
     display: flex;
     flex-direction: column;
     margin: 20px 0 20px 10px;
+    transition: all 0.3s;
+}
+.closed{
+    width: 56px;
+    min-width: 56px;
+    overflow: hidden;
+}
+.open{
+    min-width: 180px;
+    width: 20%;
 }
 .top{
     padding-bottom: 0px;
@@ -51,7 +60,7 @@
     -webkit-box-align: center;
     align-items: center;
     width: 100%;
-    padding: 20px;
+    padding: 20px 20px 20px 10px;
     border-radius: 0.375rem;
     cursor: pointer;
     user-select: none;
@@ -78,6 +87,7 @@
     box-sizing: border-box;
     outline: 0px;
     border: 0px;
+    width: 100%;
     margin: 0px;
     cursor: pointer;
     vertical-align: middle;
@@ -85,23 +95,16 @@
     text-decoration: none;
     font-family: inherit;
     letter-spacing: 0.02857em;
-    min-width: 64px;
     width: 100%;
-    display: inline-flex;
-    -webkit-box-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
+    display: flex;
     align-items: center;
     font-size: 15px;
     font-weight: 700;
     border-radius: 0.5rem;
     line-height: 1.4;
-    text-align: center;
     text-transform: uppercase;
     user-select: none;
     transition: all 150ms ease-in 0s;
-    min-height: 2.5rem;
-    padding: 0.625rem 1.5rem;
     background-image: #657be5;
     background-position-y: initial;
     background-repeat: initial;
@@ -113,8 +116,15 @@
     box-shadow: rgba(26, 115, 232, 0.15) 0rem 0.1875rem 0.1875rem 0rem, rgba(26, 115, 232, 0.2) 0rem 0.1875rem 0.0625rem -0.125rem, rgba(26, 115, 232, 0.15) 0rem 0.0625rem 0.3125rem 0rem;
     background-size: 150% !important;
     background-position-x: 25% !important;
+    padding: 10px 20px 10px 10px;
+
 }
 .bottom_button:hover{
     box-shadow: rgba(26, 115, 232, 0.4) 0rem 0.875rem 1.625rem -0.75rem, rgba(26, 115, 232, 0.15) 0rem 0.25rem 1.4375rem 0rem, rgba(26, 115, 232, 0.2) 0rem 0.5rem 0.625rem -0.3125rem;
 
 }
+
+.icon {
+    margin-right: 15px; /* Забезпечує відступ між іконкою і текстом */
+    vertical-align: middle; /* Вирівнювання іконки з текстом */
+  }

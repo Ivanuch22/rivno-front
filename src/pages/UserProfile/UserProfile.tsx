@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Container, Box, Typography, Avatar, Grid, TextField, Button, IconButton } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Container, Box, Typography, Avatar, Grid, TextField, Button, IconButton, CircularProgress } from '@mui/material';
 import { useAuth } from "@/context/Auth";
 import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
 import EditIcon from '@mui/icons-material/Edit';
 import routes from '@/routes';
 import { localStorageManager } from "@/services"
@@ -10,25 +9,30 @@ import { IUser } from '@/interfaces/user.interfaces';
 import uploadFile from '@/services/fileUploadService';
 import authAPI from '@/http';
 import { toast } from 'react-toastify';
-
-const ProfileSchema = Yup.object().shape({
-  full_name: Yup.string().required("Обов'язково"),
-  phone: Yup.string(),
-  country: Yup.string().required("Обов'язково"),
-  city: Yup.string(),
-  state: Yup.string(),
-  zip_code: Yup.string(),
-  alternate_email: Yup.string().email("Недійсний email"),
-  alternate_phone: Yup.string(),
-  secret_question: Yup.string(),
-  secret_answer: Yup.string(),
-});
-
-
+import { ProfileSchema } from '@/utils/validationSchema';
+import { useQuery } from 'react-query';
+import { initialUserValues } from '@/utils/initialValueFormik';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
-  const { userObject, updateUserData } = useAuth();
-  const [avatarUrl, setAvatarUrl] = useState<string>(userObject?.avatar || '');
+  const navigate = useNavigate();
+  const getUserData = useCallback(async () => {
+    try {
+      const res = await authAPI.get(routes.me);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }, [])
+
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: getUserData
+  });
+  const [avatarUrl12, setAvatarUrl] = useState<string>('');
+  if (isLoading) return <CircularProgress />;
+  const { user: userObject } = data;
+
 
   const handleFormSubmit = async (userData: IUser) => {
     if (userData) {
@@ -45,40 +49,45 @@ const Profile = () => {
     }
   };
 
-  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setAvatarUrl(URL.createObjectURL(event.target.files[0]));
-      try {
-        const uploadedFile = await uploadFile(event.target.files[0]);
-        if (uploadedFile.avatarUrl) {
-          const updateUser = await authAPI.put(`${routes.updateProfile}`, { avatar: uploadedFile.avatarUrl.Location });
-          localStorageManager.removeUser()
-          localStorageManager.setUser(updateUser.data.user);
-          setAvatarUrl(uploadedFile.avatarUrl.Location)
-          toast.success("Профіль успішно оновлено");
 
-        }
-      } catch (error) {
-        console.error('Помилка при оновленні профілю', error);
-        toast.error("Не вдалося оновити профіль");
-        return "skdaljf"
-      }
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      toast.error("Файл для завантаження не вибрано.");
+      return;
     }
-    else {
-      toast.error("Не вдалося оновити профіль");
+  
+    setAvatarUrl(URL.createObjectURL(file));
+  
+    try {
+      const uploadResult = await uploadFile(file);
+      if (uploadResult && uploadResult.avatarUrl) {
+        const updateResponse = await authAPI.put(`${routes.updateProfile}`, { avatar: uploadResult.avatarUrl.Location });
+        if (updateResponse.status === 200) {
+          localStorageManager.removeUser();
+          localStorageManager.setUser(updateResponse.data.user);
+          setAvatarUrl(uploadResult.avatarUrl.Location);
+          toast.success("Аватар успішно оновлено.");
+          refetch();  // Виклик refetch для оновлення даних користувача
+        }
+      }
+    } catch (error) {
+      console.error('Помилка при оновленні аватара:', error);
+      toast.error("Не вдалося оновити аватар.");
     }
   };
+  if (isError || !userObject) return <Typography variant="h6">Не вдалося завантажити ваші данні</Typography>
 
   if (!userObject) {
     return <Typography variant="h6" sx={{ fontFamily: 'inherit' }}>Дані користувача відсутні</Typography>;
   }
-
   return (
-    <Container maxWidth="md" sx={{ mt: 4, fontFamily: 'inherit' }}>
+    <Container sx={{ mt: 4, fontFamily: 'inherit', maxHeight: "95vh", padding: "50px 0 100px", overflowY: "scroll" }}>
       <Box sx={{ textAlign: 'center', mb: 4, position: 'relative' }}>
         <Avatar
           alt={userObject.full_name}
-          src={avatarUrl}
+          src={userObject.avatar?  userObject.avatar : avatarUrl12} // Використовуйте avatarUrl зі стану або прямо з даних користувача
           sx={{ width: 100, height: 100, margin: '0 auto' }}
         />
         <input
@@ -114,18 +123,7 @@ const Profile = () => {
       </Box>
 
       <Formik
-        initialValues={{
-          full_name: userObject.full_name,
-          phone: userObject.phone || '',
-          country: userObject.country,
-          city: userObject.city || '',
-          state: userObject.state || '',
-          zip_code: userObject.zip_code || '',
-          alternate_email: userObject.alternate_email || '',
-          alternate_phone: userObject.alternate_phone || '',
-          secret_question: userObject.secret_question || '',
-          secret_answer: userObject.secret_answer || '',
-        }}
+        initialValues={userObject || initialUserValues}
         validationSchema={ProfileSchema}
         onSubmit={handleFormSubmit}
       >
@@ -140,7 +138,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.full_name && !!errors.full_name}
                   helperText={touched.full_name && errors.full_name}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -151,7 +166,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.phone && !!errors.phone}
                   helperText={touched.phone && errors.phone}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -162,7 +194,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.country && !!errors.country}
                   helperText={touched.country && errors.country}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -173,7 +222,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.city && !!errors.city}
                   helperText={touched.city && errors.city}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -184,7 +250,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.state && !!errors.state}
                   helperText={touched.state && errors.state}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -195,7 +278,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.zip_code && !!errors.zip_code}
                   helperText={touched.zip_code && errors.zip_code}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -206,7 +306,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.alternate_email && !!errors.alternate_email}
                   helperText={touched.alternate_email && errors.alternate_email}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -217,7 +334,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.alternate_phone && !!errors.alternate_phone}
                   helperText={touched.alternate_phone && errors.alternate_phone}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -228,7 +362,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.secret_question && !!errors.secret_question}
                   helperText={touched.secret_question && errors.secret_question}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -239,7 +390,24 @@ const Profile = () => {
                   fullWidth
                   error={touched.secret_answer && !!errors.secret_answer}
                   helperText={touched.secret_answer && errors.secret_answer}
-                  sx={{ fontFamily: 'inherit' }}
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "#495057",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "#657be5",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "20px",
+                      "&:hover fieldset": {
+                        borderColor: "#657be5",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#657be5",
+                      },
+                    },
+                  }
+                  }
                 />
               </Grid>
             </Grid>
@@ -249,7 +417,7 @@ const Profile = () => {
                 style={{ color: "#fff" }}
                 type="submit"
                 disabled={!isValid || !dirty}
-                sx={{ fontFamily: 'inherit' }}
+                sx={{ fontFamily: 'inherit', borderRadius: "20px" }}
               >
                 Оновити профіль
               </Button>

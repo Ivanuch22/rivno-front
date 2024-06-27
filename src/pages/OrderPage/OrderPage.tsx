@@ -13,7 +13,7 @@ import Step5 from "../CreateOrder/Step5";
 import routes from "@/routes";
 import UserData from "../CreateOrder/UserData";
 
-import DownloadButton from "../MainPage/DownloadButton";
+import DownloadButton from "@/components/DownloadButton";
 
 
 const validationSchemas = [
@@ -201,7 +201,7 @@ const OrderPage = () => {
 
     return (
         <Container >
-            <Stepper activeStep={activeStep} sx={{ marginBottom: "20px" }}>
+            <Stepper activeStep={activeStep} sx={{ marginBottom: "20px",maxWidth:"100%", overflow: "hidden" }}>
                 {stepsName.map((label, index) => (
                     <Step key={index}>
                         <StepLabel
@@ -230,7 +230,7 @@ const OrderPage = () => {
                     );
                 }}
             </Formik>
-            <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "20px",maxWidth: "80%" }}>
                 <Button
                     disabled={activeStep === 0}
                     variant="contained"
@@ -240,7 +240,7 @@ const OrderPage = () => {
                         "&:hover": {
                             backgroundColor: "#657be25",
                         },
-                        padding: "10px 20px",
+                        padding: "7px 20px",
                     }}
                 >
                     Назад
