@@ -21,7 +21,10 @@ import routes from "@/routes/index";
 
 const styleTypography = {
   color: "var(--009-efd, #343A40)",
-  fontSize: "36px",
+              fontSize: {
+              xs: '22px', // Ширина вікна < 700px
+              sm: '36px'  // Ширина вікна ≥ 700px
+            },
   fontStyle: "normal",
   fontWeight: 600,
   lineHeight: "normal",
@@ -112,7 +115,7 @@ const SignUp: React.FC<ISingUp> = ({ handleFormChange,isAuthenticated,setIsAuthe
       <Box sx={{ display: "flex", flexDirection: "column", margin: "0 auto" }}>
         <Box
           sx={{
-            padding: "20px 28px",
+            padding: "20px 10px",
             display: "flex",
             flexDirection: "column",
             margin: "0 auto",

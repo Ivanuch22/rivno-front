@@ -272,8 +272,11 @@ const CreateOrder = (props: any) => {
   ];
 
   return (
-    <Container  >
-      <Stepper activeStep={activeStep} sx={{ marginBottom: "20px" }}>
+    <Container sx={{maxWidth:"95%",padding:0}}  >
+      <Stepper activeStep={activeStep} sx={{display:{
+         xs: 'none', // Ширина вікна < 700px
+         sm: 'flex'
+      },  marginBottom: "20px", }}>
         {stepsName.map((label, index) => (
           <Step key={index}>
             <StepLabel
@@ -300,7 +303,7 @@ const CreateOrder = (props: any) => {
 
           return <>
             <Form
-              style={{ overflowY: "scroll", height: "70vh", display: "block" }}
+              style={{ overflowY: "scroll", height: "75vh", display: "block" }}
             >{steps[activeStep]}</Form>
             <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
               <Button

@@ -80,7 +80,7 @@ const Step3 = ({ readOnly=false, handleFileUpload }: any) => {
     <Box sx={{ display: "flex", flexDirection: "column", margin: "0 auto", width: "100%" }}>
       <Box
         sx={{
-          padding: "20px 28px",
+          padding: "20px 10px",
           display: "flex",
           flexDirection: "column",
           margin: "0 auto",
@@ -94,7 +94,10 @@ const Step3 = ({ readOnly=false, handleFileUpload }: any) => {
         <Typography
           sx={{
             color: "var(--009-efd, #343A40)",
-            fontSize: "36px",
+                        fontSize: {
+              xs: '22px', // Ширина вікна < 700px
+              sm: '36px'  // Ширина вікна ≥ 700px
+            },
             fontStyle: "normal",
             fontWeight: 600,
             lineHeight: "normal",

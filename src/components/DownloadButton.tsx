@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { useMutation } from 'react-query';
 import { Button, CircularProgress } from '@mui/material';

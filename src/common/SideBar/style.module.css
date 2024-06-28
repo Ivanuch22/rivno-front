@@ -10,7 +10,7 @@
     transition: transform 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
     display: flex;
     flex-direction: column;
-    margin: 20px 0 20px 10px;
+    margin: 60px 0 20px 10px;
     transition: all 0.3s;
 }
 .closed{
@@ -28,7 +28,7 @@
 .logo{
     overflow: hidden;
     margin: 0 auto;
-    width: 100px;
+    width: 80%;
     height: auto;
     border-radius: 20px;
 }

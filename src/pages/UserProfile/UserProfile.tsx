@@ -13,6 +13,7 @@ import { ProfileSchema } from '@/utils/validationSchema';
 import { useQuery } from 'react-query';
 import { initialUserValues } from '@/utils/initialValueFormik';
 import { useNavigate } from 'react-router-dom';
+import style from "./UserProfile.module.css"
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -57,9 +58,9 @@ const Profile = () => {
       toast.error("Файл для завантаження не вибрано.");
       return;
     }
-  
+
     setAvatarUrl(URL.createObjectURL(file));
-  
+
     try {
       const uploadResult = await uploadFile(file);
       if (uploadResult && uploadResult.avatarUrl) {
@@ -83,11 +84,11 @@ const Profile = () => {
     return <Typography variant="h6" sx={{ fontFamily: 'inherit' }}>Дані користувача відсутні</Typography>;
   }
   return (
-    <Container sx={{ mt: 4, fontFamily: 'inherit', maxHeight: "95vh", padding: "50px 0 100px", overflowY: "scroll" }}>
+    <Container className={style.block}>
       <Box sx={{ textAlign: 'center', mb: 4, position: 'relative' }}>
         <Avatar
           alt={userObject.full_name}
-          src={userObject.avatar?  userObject.avatar : avatarUrl12} // Використовуйте avatarUrl зі стану або прямо з даних користувача
+          src={userObject.avatar ? userObject.avatar : avatarUrl12} // Використовуйте avatarUrl зі стану або прямо з даних користувача
           sx={{ width: 100, height: 100, margin: '0 auto' }}
         />
         <input

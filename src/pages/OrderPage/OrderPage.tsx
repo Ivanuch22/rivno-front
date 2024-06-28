@@ -230,7 +230,7 @@ const OrderPage = () => {
                     );
                 }}
             </Formik>
-            <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "20px",maxWidth: "80%" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "20px",maxWidth: "100%" }}>
                 <Button
                     disabled={activeStep === 0}
                     variant="contained"

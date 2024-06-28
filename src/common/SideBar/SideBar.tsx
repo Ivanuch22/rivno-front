@@ -31,7 +31,7 @@ const SideBar = () => {
 
   return (
     <div className={`${style.sidebar} ${isOpen ? style.open : style.closed}`}>
-<Button onClick={toggleSidebar} className={style.toggleButton}>
+<Button sx={{maxWidth:"100%",minWidth:"auto", overflow:"hidden",textAlign:"center"}} onClick={toggleSidebar} className={style.toggleButton}>
   {isOpen ? <CloseIcon /> : <MenuIcon />}
 </Button>
       <div className={style.top}>
