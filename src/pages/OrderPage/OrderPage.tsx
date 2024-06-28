@@ -201,7 +201,10 @@ const OrderPage = () => {
 
     return (
         <Container >
-            <Stepper activeStep={activeStep} sx={{ marginBottom: "20px",maxWidth:"100%", overflow: "hidden" }}>
+      <Stepper activeStep={activeStep} sx={{display:{
+         xs: 'none', // Ширина вікна < 700px
+         sm: 'flex'
+      },  marginBottom: "20px", }}>
                 {stepsName.map((label, index) => (
                     <Step key={index}>
                         <StepLabel
