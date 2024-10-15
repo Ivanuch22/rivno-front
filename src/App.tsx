@@ -6,24 +6,16 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
-
-
 } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 
 import routes from "./routes";
 
 import {
   MainPage,
-
 } from "./pages";
-
 import { PrivateRoutes } from "./guard";
 import { Layout } from "./components";
 import Auth from "./components/Auth/Auth";
@@ -34,7 +26,6 @@ import "./App.module.css";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import { CreateOrder } from "./pages/CreateOrder";
 import { OrderPage } from "./pages/OrderPage";
-import authAPI from "./http";
 
 const queryClient = new QueryClient()
 const ReactQueryDevtoolsProduction = React.lazy(() =>
@@ -74,13 +65,6 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        {/* <ReactQueryDevtools initialIsOpen={false} />
-        {false && (
-          <React.Suspense fallback={null}>
-            <ReactQueryDevtoolsProduction />
-          </React.Suspense>
-        )} */}
-
       </QueryClientProvider>
     </>
   );

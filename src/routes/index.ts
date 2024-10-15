@@ -1,4 +1,5 @@
 const routes = {
+  //server routes
   baseURL: import.meta.env.VITE_REACT_APP_SERVER_URL,
   auth: "/auth",
   refresh: "/token/refresh/",
@@ -9,8 +10,6 @@ const routes = {
   updateAvatar: "/users/update-avatar",
   uploadFile: "/aws/upload",
   tokenRefresh : "/users/refresh-token",
-
-
 
   createOrder: "/orders/create",
   allOrders: "/orders/all",
