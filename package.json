@@ -9,6 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "stylelint": "npx stylelint \"./**/*.{css,scss,sass}\" --config \"./stylelint.config.cjs\"",
+    "prod": "vite build && pm2 serve dist --name my-frontend-app --spa --port 5173",
     "stylelint:fix": "npm run stylelint -- --fix"
   },
   "dependencies": {
